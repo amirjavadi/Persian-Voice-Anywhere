@@ -1,0 +1,105 @@
+<div dir="rtl">
+
+# نقشه‌ی راه — Persian Voice Anywhere
+
+کار به Milestoneهای کوچک و قابل‌تحویل شکسته شده است. **هر Milestone پس از اتمام
+تست می‌شود و بدون تأیید مالک، وارد Milestone بعد نمی‌شویم** (طبق `CLAUDE.md` §۵).
+
+وضعیت‌ها: ⬜ شروع‌نشده · 🟨 در حال انجام · ✅ کامل
+
+---
+
+## دامنه‌ی v1 (قابل‌فروش)
+
+هسته‌ی دیکته + نوت‌پد داخلی + Sticky Notes. مطابق ADR-0006.
+
+| Milestone | عنوان | خروجی | وضعیت |
+|-----------|-------|-------|-------|
+| M0 | داربست و زیرساخت | solution، DI، logging، CI، تست نمونه | ⬜ |
+| M1 | ضبط صدا + VAD | `Pva.Audio` با WASAPI و Silero VAD | ⬜ |
+| M2 | موتور STT هیبرید | whisper.cpp کارکردی + adapter Faster Whisper | ⬜ |
+| M3 | پس‌پردازش فارسی | `Pva.PersianText` + تست‌های golden | ⬜ |
+| M4 | تزریق متن | `Pva.Injection` با SendInput در اپ واقعی | ⬜ |
+| M5 | Hotkey + orchestrator | pipeline کامل صحبت→تایپ (اولین دموی واقعی) | ⬜ |
+| M6 | دستورات صوتی | «خط بعد»، «ویرگول»… به‌صورت کنش | ⬜ |
+| M7 | UI: Tray + میکروفون شناور + تنظیمات | تجربه‌ی کاربری کامل هسته | ⬜ |
+| M8 | نوت‌پد داخلی | ویرایشگر تب‌دار (AvalonEdit) | ⬜ |
+| M9 | Sticky Notes | یادداشت‌های پین‌شونده | ⬜ |
+| M10 | بسته‌بندی پرتابل + سخت‌سازی | ZIP/EXE، perf، پایداری، انتشار v1 | ⬜ |
+
+---
+
+## جزئیات Milestoneها
+
+### M0 — داربست و زیرساخت ⬜
+- solution و پروژه‌ها طبق نقشه‌ی `architecture.md` §۴.
+- DI (Microsoft.Extensions.Hosting)، Serilog، `.editorconfig`، Directory.Build.props.
+- `Pva.Tests` با یک تست نمونه؛ اجرای `dotnet test` سبز.
+- CI (GitHub Actions): build + test روی هر push/PR.
+- **تست:** build و test سبز؛ اجرای خالی `Pva.App` بدون خطا.
+- **دروازه:** تأیید مالک برای M1.
+
+### M1 — ضبط صدا + VAD ⬜
+- `IAudioCapture` با WASAPI (NAudio)، ۱۶kHz مونو.
+- VAD با Silero (ONNX Runtime)؛ رویداد `SegmentReady`.
+- **تست:** unit روی قطعه‌بندی با فایل صوتی نمونه؛ سنجش Idle CPU.
+
+### M2 — موتور STT هیبرید ⬜
+- `ISpeechToTextEngine` + `WhisperCppEngine` (Whisper.net) کارکردی روی CPU.
+- `FasterWhisperEngine` (sidecar پایتون + IPC) پشت همان اینترفیس؛ fallback خودکار.
+- lazy-load مدل؛ استفاده از GPU در صورت وجود.
+- **تست:** رونویسی فایل نمونه‌ی فارسی؛ تست انتخاب/fallback موتور (mock).
+
+### M3 — پس‌پردازش فارسی ⬜
+- `IPersianTextProcessor`: normalization، نیم‌فاصله، علائم، اعداد، ترکیب fa/en،
+  اصطلاحات محافظت‌شده.
+- `initial_prompt` فارسی+فنی.
+- **تست:** مجموعه‌ی golden شامل «امروز یک Pull Request روی GitHub زدم.»
+
+### M4 — تزریق متن ⬜
+- `ITextInjector` با SendInput (Unicode)؛ ارسال کنش‌ها (Enter/Backspace/Undo).
+- مدیریت surrogate و نرخ ارسال.
+- **تست:** تزریق در Notepad و یک اپ مرورگر؛ مستندسازی محدودیت UIPI.
+
+### M5 — Hotkey + Orchestrator ⬜
+- `IHotkeyService` (low-level hook / RegisterHotKey): Push-to-Talk، Toggle،
+  Double-Ctrl، Caps Lock، دلخواه.
+- `DictationOrchestrator`: اتصال کامل ضبط→STT→دستور→فارسی→تزریق.
+- **خروجی:** اولین دموی واقعی صحبت→تایپ در اپ‌های واقعی.
+- **تست:** integration سرتاسری pipeline.
+
+### M6 — دستورات صوتی ⬜
+- `ICommandParser`: عبارات رزرو → کنش؛ حالت دستور/دیکته با toggle (ریسک R6).
+- **تست:** تشخیص دستور در برابر دیکته‌ی واقعی همان واژه.
+
+### M7 — UI هسته ⬜
+- System Tray + منوی سریع؛ میکروفون شناور (topmost، draggable، شفافیت، مخفی‌شونده)؛
+  پنجره‌ی تنظیمات (Fluent، Dark/Light، High-DPI).
+- **تست:** تست ViewModelها؛ QA بصری با `/design-review`.
+
+### M8 — نوت‌پد داخلی ⬜
+- ویرایشگر تب‌دار (AvalonEdit): جستجو/جایگزینی، Word Wrap، RTL، Undo/Redo،
+  Session Restore، Dark/Light، ذخیره‌ی خودکار، Drag & Drop.
+- **تست:** تست ذخیره/بازیابی session و repositoryها.
+
+### M9 — Sticky Notes ⬜
+- یادداشت‌های کوچک topmost و pin‌شونده روی دسکتاپ؛ Markdown؛ ذخیره‌ی خودکار (SQLite).
+- **تست:** persistence و رفتار pin.
+
+### M10 — بسته‌بندی و سخت‌سازی ⬜
+- انتشار ZIP پرتابل + EXE تک‌فایل؛ تنظیمات کنار exe.
+- perf (شروع < ۲ ثانیه، Idle CPU < ۲٪، RAM)، تست نشت حافظه، پایداری اجرای طولانی.
+- امضای کد (در صورت فراهم‌بودن گواهی)، NOTICE کامپوننت‌ها.
+- **خروجی:** انتشار v1.
+
+---
+
+## پس از v1 (Backlog)
+
+ویرایش هوشمند متن · تاریخچه‌ی کلیپ‌بورد (جستجو/دسته‌بندی) · OCR (اسکرین‌شات → متن
+فارسی) · اسکرین‌شات و حاشیه‌نویسی (هایلایت/رسم/Blur/Export) · آرشیو ضبط صدا
+(جستجو/پخش/خروجی) · Voice Macro · Text Expansion (مثل `/phone`) · بازنویسی هوشمند
+(رسمی/دوستانه/کوتاه/بلند، آفلاین‌محور و سپس LLM opt-in) · marketplace افزونه‌ها ·
+MSIX + به‌روزرسانی خودکار · مستندسازی خودکار (Developer Guide، API Docs، User Manual).
+
+</div>

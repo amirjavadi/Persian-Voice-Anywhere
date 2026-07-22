@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      # The solution is created in Milestone M0. Until then these steps are
+      # skipped gracefully so the workflow stays green on the foundation commit.
+      - name: Check for solution
+        id: sln
+        shell: pwsh
+        run: |
+          $found = Get-ChildItem -Filter *.sln -Recurse | Select-Object -First 1
+          if ($found) {
+            "exists=true" >> $env:GITHUB_OUTPUT
+          } else {
+            "exists=false" >> $env:GITHUB_OUTPUT
+            Write-Host "No solution yet (pre-M0). Skipping build/test."
+          }
+
+      - name: Restore
+        if: steps.sln.outputs.exists == 'true'
+        run: dotnet restore
+
+      - name: Build
+        if: steps.sln.outputs.exists == 'true'
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        if: steps.sln.outputs.exists == 'true'
+        run: dotnet test --configuration Release --no-build --verbosity normal
