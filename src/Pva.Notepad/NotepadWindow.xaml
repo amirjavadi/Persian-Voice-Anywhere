@@ -1,0 +1,39 @@
+<Window x:Class="Pva.Notepad.NotepadWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="نوت‌پد — Persian Voice Anywhere"
+        Height="560" Width="760" WindowStartupLocation="CenterScreen"
+        FlowDirection="RightToLeft" FontFamily="Segoe UI, Tahoma"
+        Background="#0F1013" Foreground="#FAFAFA">
+    <DockPanel>
+        <ToolBarTray DockPanel.Dock="Top" Background="#16171B">
+            <ToolBar Background="#16171B">
+                <Button Content="جدید" Command="{Binding NewCommand}" Margin="2"/>
+                <Button Content="باز کردن" Command="{Binding OpenCommand}" Margin="2"/>
+                <Button Content="ذخیره" Command="{Binding SaveCommand}" Margin="2"/>
+                <Button Content="ذخیره به‌نام" Command="{Binding SaveAsCommand}" Margin="2"/>
+                <Separator/>
+                <Button Content="بستن تب" Command="{Binding CloseTabCommand}" Margin="2"/>
+            </ToolBar>
+        </ToolBarTray>
+
+        <TabControl ItemsSource="{Binding Documents}" SelectedItem="{Binding ActiveDocument}"
+                    Background="#0F1013" BorderThickness="0">
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Title}" />
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <TextBox Text="{Binding Content, UpdateSourceTrigger=PropertyChanged}"
+                             AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                             Background="#0F1013" Foreground="#FAFAFA" BorderThickness="0"
+                             FontFamily="Tahoma, Segoe UI" FontSize="15" Padding="14"
+                             SpellCheck.IsEnabled="False" />
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
+    </DockPanel>
+</Window>

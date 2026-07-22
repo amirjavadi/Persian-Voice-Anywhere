@@ -13,6 +13,7 @@ using Pva.Commands;
 using Pva.Core;
 using Pva.Hotkeys;
 using Pva.Injection;
+using Pva.Notepad;
 using Pva.PersianText;
 using Pva.Storage;
 using Pva.Stt;
@@ -29,6 +30,7 @@ public partial class App : Application
     private IHost? _host;
     private TaskbarIcon? _tray;
     private FloatingMicWindow? _mic;
+    private NotepadWindow? _notepad;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -91,6 +93,7 @@ public partial class App : Application
         services.AddAudioCapture(new AudioCaptureOptions());
         services.AddSpeechToText(new SttEngineOptions { Preferred = engineKind, Device = device });
 
+        services.AddNotepad();
         services.AddSingleton<DictationViewModel>();
         services.AddTransient<SettingsViewModel>();
     }
@@ -105,6 +108,9 @@ public partial class App : Application
         var showMic = new MenuItem { Header = "نمایش میکروفون" };
         showMic.Click += (_, _) => _mic?.Show();
 
+        var notepad = new MenuItem { Header = "نوت‌پد داخلی" };
+        notepad.Click += (_, _) => ShowNotepad();
+
         var settings = new MenuItem { Header = "تنظیمات" };
         settings.Click += (_, _) => ShowSettings();
 
@@ -113,6 +119,7 @@ public partial class App : Application
 
         menu.Items.Add(toggle);
         menu.Items.Add(showMic);
+        menu.Items.Add(notepad);
         menu.Items.Add(settings);
         menu.Items.Add(new Separator());
         menu.Items.Add(exit);
@@ -123,6 +130,18 @@ public partial class App : Application
             Icon = System.Drawing.SystemIcons.Application,
             ContextMenu = menu,
         };
+    }
+
+    private void ShowNotepad()
+    {
+        if (_notepad is null)
+        {
+            _notepad = new NotepadWindow(_host!.Services.GetRequiredService<NotepadViewModel>());
+            _notepad.Closed += (_, _) => _notepad = null;
+        }
+
+        _notepad.Show();
+        _notepad.Activate();
     }
 
     private void ShowSettings()
