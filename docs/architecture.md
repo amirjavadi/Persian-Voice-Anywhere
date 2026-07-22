@@ -63,6 +63,7 @@ flowchart TD
 | `Pva.PersianText`| `IPersianTextProcessor` خالص و قطعی + دیکشنری‌ها             | Core      |
 | `Pva.Commands`   | `ICommandParser`، گرامر دستور صوتی                           | Core      |
 | `Pva.TextExpansion` | `ITextExpander`، میان‌بُر/ماکرو (`/phone`، «امضا»)، خالص     | Core      |
+| `Pva.Clipboard`  | تاریخچه‌ی کلیپ‌بورد (منطق خالص + مانیتور Win32 + پنجره)       | Core, UI  |
 | `Pva.Injection`  | `ITextInjector` با SendInput                                 | Core      |
 | `Pva.Hotkeys`    | `IHotkeyService`، low-level keyboard hook / RegisterHotKey   | Core      |
 | `Pva.Storage`    | repositoryها (SQLite)، تنظیمات JSON، محافظت secret            | Core      |

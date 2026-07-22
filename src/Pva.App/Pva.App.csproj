@@ -13,6 +13,7 @@
     <ProjectReference Include="..\Pva.StickyNotes\Pva.StickyNotes.csproj" />
     <ProjectReference Include="..\Pva.Plugins\Pva.Plugins.csproj" />
     <ProjectReference Include="..\Pva.TextExpansion\Pva.TextExpansion.csproj" />
+    <ProjectReference Include="..\Pva.Clipboard\Pva.Clipboard.csproj" />
   </ItemGroup>
 
   <ItemGroup>

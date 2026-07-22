@@ -2,6 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/Pva.App/Pva.App.csproj" />
     <Project Path="src/Pva.Audio/Pva.Audio.csproj" />
+    <Project Path="src/Pva.Clipboard/Pva.Clipboard.csproj" />
     <Project Path="src/Pva.Commands/Pva.Commands.csproj" />
     <Project Path="src/Pva.Core/Pva.Core.csproj" />
     <Project Path="src/Pva.Hotkeys/Pva.Hotkeys.csproj" />

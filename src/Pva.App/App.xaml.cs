@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Pva.App.ViewModels;
 using Pva.App.Views;
 using Pva.Audio;
+using Pva.Clipboard;
 using Pva.Commands;
 using Pva.Core;
 using Pva.Hotkeys;
@@ -33,6 +34,7 @@ public partial class App : Application
     private TaskbarIcon? _tray;
     private FloatingMicWindow? _mic;
     private NotepadWindow? _notepad;
+    private ClipboardMonitor? _clipboardMonitor;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -72,6 +74,13 @@ public partial class App : Application
 
         // بازیابی یادداشت‌های چسبان از session قبلی.
         _host.Services.GetRequiredService<StickyNotesManager>().ShowAll();
+
+        // شنود کلیپ‌بورد و ثبت در تاریخچه.
+        var clipboard = _host.Services.GetRequiredService<ClipboardHistoryService>();
+        clipboard.Load();
+        _clipboardMonitor = _host.Services.GetRequiredService<ClipboardMonitor>();
+        _clipboardMonitor.TextCopied += text => clipboard.Add(text, DateTime.UtcNow.Ticks);
+        _clipboardMonitor.Start();
     }
 
     private void ConfigureServices(IServiceCollection services)
@@ -106,6 +115,7 @@ public partial class App : Application
 
         services.AddNotepad();
         services.AddStickyNotes();
+        services.AddClipboardHistory();
         services.AddSingleton<DictationViewModel>();
         services.AddTransient<SettingsViewModel>();
     }
@@ -126,6 +136,9 @@ public partial class App : Application
         var newNote = new MenuItem { Header = "یادداشت چسبان جدید" };
         newNote.Click += (_, _) => _host!.Services.GetRequiredService<StickyNotesManager>().CreateNew();
 
+        var clipboard = new MenuItem { Header = "تاریخچه‌ی کلیپ‌بورد" };
+        clipboard.Click += (_, _) => ShowClipboardHistory();
+
         var settings = new MenuItem { Header = "تنظیمات" };
         settings.Click += (_, _) => ShowSettings();
 
@@ -136,6 +149,7 @@ public partial class App : Application
         menu.Items.Add(showMic);
         menu.Items.Add(notepad);
         menu.Items.Add(newNote);
+        menu.Items.Add(clipboard);
         menu.Items.Add(settings);
         menu.Items.Add(new Separator());
         menu.Items.Add(exit);
@@ -160,6 +174,13 @@ public partial class App : Application
         _notepad.Activate();
     }
 
+    private void ShowClipboardHistory()
+    {
+        var viewModel = _host!.Services.GetRequiredService<ClipboardHistoryViewModel>();
+        var window = new ClipboardHistoryWindow(viewModel);
+        window.Show();
+    }
+
     private void ShowSettings()
     {
         var viewModel = _host!.Services.GetRequiredService<SettingsViewModel>();
@@ -169,6 +190,7 @@ public partial class App : Application
 
     private void ExitApp()
     {
+        _clipboardMonitor?.Dispose();
         _tray?.Dispose();
 
         if (_host is not null)
