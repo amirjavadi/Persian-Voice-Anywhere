@@ -28,6 +28,7 @@
     <ProjectReference Include="..\..\src\Pva.Hotkeys\Pva.Hotkeys.csproj" />
     <ProjectReference Include="..\..\src\Pva.Storage\Pva.Storage.csproj" />
     <ProjectReference Include="..\..\src\Pva.Notepad\Pva.Notepad.csproj" />
+    <ProjectReference Include="..\..\src\Pva.StickyNotes\Pva.StickyNotes.csproj" />
   </ItemGroup>
 
 </Project>

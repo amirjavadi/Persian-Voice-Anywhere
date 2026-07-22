@@ -15,6 +15,7 @@ using Pva.Hotkeys;
 using Pva.Injection;
 using Pva.Notepad;
 using Pva.PersianText;
+using Pva.StickyNotes;
 using Pva.Storage;
 using Pva.Stt;
 using Serilog;
@@ -67,6 +68,9 @@ public partial class App : Application
         _mic.Show();
 
         _tray = BuildTray(viewModel);
+
+        // بازیابی یادداشت‌های چسبان از session قبلی.
+        _host.Services.GetRequiredService<StickyNotesManager>().ShowAll();
     }
 
     private void ConfigureServices(IServiceCollection services)
@@ -94,6 +98,7 @@ public partial class App : Application
         services.AddSpeechToText(new SttEngineOptions { Preferred = engineKind, Device = device });
 
         services.AddNotepad();
+        services.AddStickyNotes();
         services.AddSingleton<DictationViewModel>();
         services.AddTransient<SettingsViewModel>();
     }
@@ -111,6 +116,9 @@ public partial class App : Application
         var notepad = new MenuItem { Header = "نوت‌پد داخلی" };
         notepad.Click += (_, _) => ShowNotepad();
 
+        var newNote = new MenuItem { Header = "یادداشت چسبان جدید" };
+        newNote.Click += (_, _) => _host!.Services.GetRequiredService<StickyNotesManager>().CreateNew();
+
         var settings = new MenuItem { Header = "تنظیمات" };
         settings.Click += (_, _) => ShowSettings();
 
@@ -120,6 +128,7 @@ public partial class App : Application
         menu.Items.Add(toggle);
         menu.Items.Add(showMic);
         menu.Items.Add(notepad);
+        menu.Items.Add(newNote);
         menu.Items.Add(settings);
         menu.Items.Add(new Separator());
         menu.Items.Add(exit);
