@@ -1,42 +1,44 @@
 <title>Persian Voice Anywhere — زبان طراحی Liquid Glass</title>
 <style>
   :root{
-    --bg:#EEF1F6; --bg-glow:rgba(19,185,172,.10);
-    --win:rgba(255,255,255,.62); --win-brd:rgba(255,255,255,.85);
-    --panel:rgba(255,255,255,.5); --panel-brd:rgba(16,26,42,.07);
-    --ink:#101826; --muted:#6A7789; --faint:#9AA6B6;
-    --accent:#0FB5A6; --accent-2:#6D5EF6;
-    --hair:rgba(16,26,42,.08); --hover:rgba(16,26,42,.045);
-    --sh:0 24px 70px -24px rgba(24,40,72,.30);
-    --rec:#F0567E;
+    --bg:#F4F4F5; --bg-glow:rgba(9,9,11,.045);
+    --win:rgba(255,255,255,.72); --win-brd:rgba(255,255,255,.9);
+    --panel:rgba(255,255,255,.55); --panel-brd:rgba(9,9,11,.06);
+    --ink:#09090B; --muted:#71717A; --faint:#A1A1AA;
+    --accent:#09090B; --on:#FFFFFF;
+    --hair:rgba(9,9,11,.09); --hover:rgba(9,9,11,.045);
+    --sh:0 24px 70px -24px rgba(9,9,11,.22);
     --font-fa:"Vazirmatn","Segoe UI","Tahoma",system-ui,sans-serif;
     --font-en:"Segoe UI Variable Display","SF Pro Display","Segoe UI",system-ui,sans-serif;
   }
   @media (prefers-color-scheme:dark){
     :root{
-      --bg:#080C14; --bg-glow:rgba(19,185,172,.14);
-      --win:rgba(22,30,46,.55); --win-brd:rgba(255,255,255,.10);
+      --bg:#0A0A0B; --bg-glow:rgba(255,255,255,.05);
+      --win:rgba(24,24,27,.55); --win-brd:rgba(255,255,255,.10);
       --panel:rgba(255,255,255,.045); --panel-brd:rgba(255,255,255,.07);
-      --ink:#E9EFF7; --muted:#93A1B5; --faint:#5C6B80;
-      --hair:rgba(255,255,255,.08); --hover:rgba(255,255,255,.05);
-      --sh:0 30px 80px -30px rgba(0,0,0,.7);
+      --ink:#FAFAFA; --muted:#A1A1AA; --faint:#52525B;
+      --accent:#FAFAFA; --on:#09090B;
+      --hair:rgba(255,255,255,.09); --hover:rgba(255,255,255,.05);
+      --sh:0 30px 80px -30px rgba(0,0,0,.75);
     }
   }
   :root[data-theme="light"]{
-    --bg:#EEF1F6; --bg-glow:rgba(19,185,172,.10);
-    --win:rgba(255,255,255,.62); --win-brd:rgba(255,255,255,.85);
-    --panel:rgba(255,255,255,.5); --panel-brd:rgba(16,26,42,.07);
-    --ink:#101826; --muted:#6A7789; --faint:#9AA6B6;
-    --hair:rgba(16,26,42,.08); --hover:rgba(16,26,42,.045);
-    --sh:0 24px 70px -24px rgba(24,40,72,.30);
+    --bg:#F4F4F5; --bg-glow:rgba(9,9,11,.045);
+    --win:rgba(255,255,255,.72); --win-brd:rgba(255,255,255,.9);
+    --panel:rgba(255,255,255,.55); --panel-brd:rgba(9,9,11,.06);
+    --ink:#09090B; --muted:#71717A; --faint:#A1A1AA;
+    --accent:#09090B; --on:#FFFFFF;
+    --hair:rgba(9,9,11,.09); --hover:rgba(9,9,11,.045);
+    --sh:0 24px 70px -24px rgba(9,9,11,.22);
   }
   :root[data-theme="dark"]{
-    --bg:#080C14; --bg-glow:rgba(19,185,172,.14);
-    --win:rgba(22,30,46,.55); --win-brd:rgba(255,255,255,.10);
+    --bg:#0A0A0B; --bg-glow:rgba(255,255,255,.05);
+    --win:rgba(24,24,27,.55); --win-brd:rgba(255,255,255,.10);
     --panel:rgba(255,255,255,.045); --panel-brd:rgba(255,255,255,.07);
-    --ink:#E9EFF7; --muted:#93A1B5; --faint:#5C6B80;
-    --hair:rgba(255,255,255,.08); --hover:rgba(255,255,255,.05);
-    --sh:0 30px 80px -30px rgba(0,0,0,.7);
+    --ink:#FAFAFA; --muted:#A1A1AA; --faint:#52525B;
+    --accent:#FAFAFA; --on:#09090B;
+    --hair:rgba(255,255,255,.09); --hover:rgba(255,255,255,.05);
+    --sh:0 30px 80px -30px rgba(0,0,0,.75);
   }
 
   *{box-sizing:border-box;margin:0;padding:0}
@@ -44,19 +46,17 @@
     -webkit-font-smoothing:antialiased;min-height:100vh;
     display:flex;align-items:center;justify-content:center;padding:34px 20px}
   body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-    background:radial-gradient(60% 55% at 78% 12%,var(--bg-glow),transparent 60%),
-      radial-gradient(50% 50% at 15% 92%,rgba(109,94,246,.08),transparent 60%)}
+    background:radial-gradient(55% 50% at 82% 6%,var(--bg-glow),transparent 60%)}
 
-  /* ---- desktop window shell ---- */
   .win{position:relative;z-index:1;width:min(960px,100%);height:min(600px,84vh);
-    background:var(--win);-webkit-backdrop-filter:blur(30px) saturate(160%);backdrop-filter:blur(30px) saturate(160%);
+    background:var(--win);-webkit-backdrop-filter:blur(30px) saturate(140%);backdrop-filter:blur(30px) saturate(140%);
     border:1px solid var(--win-brd);border-radius:16px;box-shadow:var(--sh);
     display:flex;flex-direction:column;overflow:hidden}
 
   .titlebar{height:46px;flex:0 0 auto;display:flex;align-items:center;direction:rtl;
     padding:0 8px 0 12px;border-bottom:1px solid var(--hair);gap:10px}
-  .brand{display:flex;align-items:center;gap:9px;padding-inline-start:6px}
-  .brand svg{width:20px;height:20px}
+  .brand{display:flex;align-items:center;gap:9px;padding-inline-start:6px;color:var(--ink)}
+  .brand svg{width:19px;height:19px}
   .brand b{font-family:var(--font-en);font-size:12.5px;font-weight:600;letter-spacing:.01em}
   .tsep{width:1px;height:16px;background:var(--hair)}
   .tmeta{font-size:11.5px;color:var(--muted)}
@@ -68,27 +68,25 @@
   .winctl button{width:34px;height:30px;border:0;background:transparent;color:var(--muted);cursor:pointer;
     border-radius:8px;display:grid;place-items:center;transition:.18s}
   .winctl button:hover{background:var(--hover);color:var(--ink)}
-  .winctl button.close:hover{background:var(--rec);color:#fff}
+  .winctl button.close:hover{background:#F0384E;color:#fff}
   .winctl svg{width:11px;height:11px}
 
   .body{flex:1;display:flex;direction:rtl;min-height:0}
 
-  /* nav rail */
   .rail{width:72px;flex:0 0 auto;border-inline-start:1px solid var(--hair);
     display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 0}
   .nav{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;cursor:pointer;
     color:var(--muted);position:relative;transition:.2s}
   .nav:hover{background:var(--hover);color:var(--ink)}
-  .nav.on{color:#fff;background:linear-gradient(140deg,var(--accent),var(--accent-2));
-    box-shadow:0 8px 20px -8px var(--accent)}
+  .nav.on{color:var(--on);background:var(--accent)}
   .nav svg{width:22px;height:22px}
+  .nav .ico{display:grid;place-items:center}
   .nav .tip{position:absolute;inset-inline-end:56px;top:50%;transform:translateY(-50%);
     white-space:nowrap;font-size:11.5px;background:var(--ink);color:var(--bg);padding:5px 9px;border-radius:8px;
     opacity:0;pointer-events:none;transition:.18s}
-  .nav:hover .tip{opacity:.92}
+  .nav:hover .tip{opacity:.95}
   .rail .grow{flex:1}
 
-  /* content */
   .content{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}
   .chead{padding:22px 26px 4px}
   .chead h2{font-size:17px;font-weight:600;letter-spacing:-.01em}
@@ -98,67 +96,61 @@
   .home{display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:start}
   @media(max-width:680px){.home{grid-template-columns:1fr;justify-items:center}}
 
-  /* mic */
   .mic{display:flex;flex-direction:column;align-items:center;gap:14px;padding:8px 6px}
   .orb{width:132px;height:132px;border-radius:50%;position:relative;cursor:pointer;user-select:none;
-    background:radial-gradient(62% 62% at 36% 30%,rgba(255,255,255,.9),rgba(255,255,255,.04) 62%),
-      radial-gradient(120% 120% at 72% 82%,var(--accent-2),var(--accent));
-    box-shadow:inset 0 1px 6px rgba(255,255,255,.6),inset 0 -14px 30px rgba(0,0,0,.22),0 16px 38px -12px var(--accent);
+    color:var(--on);background:radial-gradient(72% 72% at 36% 26%,rgba(255,255,255,.14),transparent 60%),var(--accent);
+    box-shadow:0 14px 34px -16px rgba(9,9,11,.55),inset 0 1px 0 rgba(255,255,255,.14);
     display:grid;place-items:center;transition:transform .5s cubic-bezier(.2,.9,.2,1.2)}
   .orb .halo{position:absolute;inset:-10px;border-radius:50%;border:1.5px solid var(--accent);opacity:0}
   .orb.live{animation:breathe 2.4s ease-in-out infinite}
   .orb.live .halo{animation:pulse 2.4s ease-out infinite}
   @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
-  @keyframes pulse{0%{opacity:.5;transform:scale(.92)}100%{opacity:0;transform:scale(1.4)}}
+  @keyframes pulse{0%{opacity:.35;transform:scale(.92)}100%{opacity:0;transform:scale(1.4)}}
   .orb svg{width:40px;height:40px}
   .wv{display:none;align-items:center;gap:3px;height:34px}
-  .wv i{width:3.5px;height:8px;border-radius:3px;background:#fff;opacity:.95;transition:height .12s}
+  .wv i{width:3.5px;height:8px;border-radius:3px;background:currentColor;opacity:.95;transition:height .12s}
   .mic .lbl{text-align:center}
   .mic .lbl b{font-size:14px;font-weight:600}
   .mic .lbl span{display:block;font-size:11.5px;color:var(--muted);margin-top:3px}
   .kbd{font-family:var(--font-en);font-size:10.5px;color:var(--muted);border:1px solid var(--hair);
     border-radius:7px;padding:3px 8px}
 
-  /* recent list */
   .recent .rt{font-size:11.5px;color:var(--faint);letter-spacing:.06em;margin:2px 0 10px;text-transform:uppercase;font-family:var(--font-en)}
   .item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;transition:.18s;cursor:default}
   .item:hover{background:var(--panel)}
-  .item .st{width:7px;height:7px;border-radius:50%;background:var(--accent);flex:0 0 auto}
+  .item .st{width:6px;height:6px;border-radius:50%;background:var(--faint);flex:0 0 auto}
   .item .tx{flex:1;font-size:13px;line-height:1.7;min-width:0}
   .item .tx .en{font-family:var(--font-en);font-weight:600}
   .item .tm{font-size:11px;color:var(--faint);white-space:nowrap;font-family:var(--font-en)}
   .item .cp{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;color:var(--muted);
     opacity:0;transition:.18s;cursor:pointer}
   .item:hover .cp{opacity:1}
-  .item .cp:hover{background:var(--hover);color:var(--accent)}
+  .item .cp:hover{background:var(--hover);color:var(--ink)}
   .item .cp svg{width:15px;height:15px}
-  .nav .ico{display:grid;place-items:center}
 
-  /* status bar */
   .status{height:32px;flex:0 0 auto;border-top:1px solid var(--hair);direction:rtl;
     display:flex;align-items:center;gap:16px;padding:0 18px;font-size:11.5px;color:var(--muted)}
   .status .s{display:flex;align-items:center;gap:6px}
   .status .s b{font-weight:600;color:var(--ink);font-family:var(--font-en)}
-  .status .live-dot{width:7px;height:7px;border-radius:50%;background:var(--faint)}
-  .status.on .live-dot{background:var(--accent);box-shadow:0 0 0 3px rgba(15,181,166,.18)}
+  .status .live-dot{width:7px;height:7px;border-radius:50%;background:var(--faint);transition:.25s}
+  .status.on .live-dot{background:var(--ink)}
 
-  /* floating mic overlay (separate always-on-top window) */
   .float{position:absolute;bottom:52px;inset-inline-start:26px;z-index:5;direction:rtl;
     display:flex;align-items:center;gap:10px;padding:8px 8px 8px 14px;border-radius:999px;
-    background:var(--win);-webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%);
-    border:1px solid var(--win-brd);box-shadow:0 14px 34px -14px rgba(24,40,72,.4);cursor:pointer}
+    background:var(--win);-webkit-backdrop-filter:blur(20px) saturate(140%);backdrop-filter:blur(20px) saturate(140%);
+    border:1px solid var(--win-brd);box-shadow:0 14px 34px -14px rgba(9,9,11,.35);cursor:pointer}
   .float .fo{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
-    background:linear-gradient(140deg,var(--accent),var(--accent-2));color:#fff}
+    background:var(--accent);color:var(--on)}
   .float .fo svg{width:17px;height:17px}
   .float small{font-size:11px;color:var(--muted)}
   .float .fw{display:none;align-items:center;gap:2.5px;height:16px}
-  .float .fw i{width:3px;height:5px;border-radius:2px;background:var(--accent);transition:height .12s}
+  .float .fw i{width:3px;height:5px;border-radius:2px;background:currentColor;transition:height .12s}
 
   .toggle{margin-inline-start:auto;display:flex;gap:3px;background:var(--panel);border:1px solid var(--hair);
     border-radius:10px;padding:3px}
   .toggle button{font-family:var(--font-en);border:0;background:transparent;color:var(--muted);cursor:pointer;
     font-size:11px;font-weight:600;padding:5px 11px;border-radius:7px;transition:.2s}
-  .toggle button.on{background:var(--ink);color:var(--bg)}
+  .toggle button.on{background:var(--accent);color:var(--on)}
 
   @media (prefers-reduced-motion:reduce){.orb.live,.orb.live .halo{animation:none!important}}
 </style>
@@ -178,10 +170,9 @@
     </button>
     <div class="brand">
       <svg viewBox="0 0 24 24" fill="none">
-        <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0FB5A6"/><stop offset="1" stop-color="#6D5EF6"/></linearGradient></defs>
-        <rect x="9" y="3" width="6" height="10" rx="3" fill="url(#bg)"/>
-        <path d="M6 11a6 6 0 0 0 12 0" stroke="url(#bg)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-        <path d="M12 17v3" stroke="url(#bg)" stroke-width="1.8" stroke-linecap="round"/>
+        <rect x="9" y="3" width="6" height="10" rx="3" fill="currentColor"/>
+        <path d="M6 11a6 6 0 0 0 12 0" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <path d="M12 17v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
       </svg>
       <b>Persian Voice Anywhere</b>
     </div>
@@ -199,9 +190,9 @@
             <div class="orb" id="orb" onclick="toggle()">
               <div class="halo"></div>
               <svg id="mg" viewBox="0 0 24 24" fill="none">
-                <rect x="9" y="3" width="6" height="11" rx="3" fill="#fff"/>
-                <path d="M6 12a6 6 0 0 0 12 0" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-                <path d="M12 18v3" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+                <rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/>
+                <path d="M6 12a6 6 0 0 0 12 0" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                <path d="M12 18v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
               </svg>
               <div class="wv" id="wv"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
             </div>
@@ -235,10 +226,9 @@
     </div>
   </div>
 
-  <!-- floating always-on-top mic -->
   <div class="float" id="float" onclick="toggle()">
     <div class="fo">
-      <svg id="fmg" viewBox="0 0 24 24" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#fff"/><path d="M6 12a6 6 0 0 0 12 0" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M12 18v3" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <svg id="fmg" viewBox="0 0 24 24" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M6 12a6 6 0 0 0 12 0" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M12 18v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
       <div class="fw" id="fw"><i></i><i></i><i></i><i></i><i></i></div>
     </div>
     <small id="fl">میکروفون شناور · Always-On-Top</small>
@@ -256,15 +246,14 @@
   function flip(){setTheme(root.getAttribute('data-theme')==='dark'?'light':'dark');}
   (function(){const d=matchMedia('(prefers-color-scheme:dark)').matches;(d?td:tl).classList.add('on');})();
 
-  // custom minimal glass icons
-  function ic(inner){return '<svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="i'+(ic.n=(ic.n||0)+1)+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0FB5A6"/><stop offset="1" stop-color="#6D5EF6"/></linearGradient></defs>'+inner.replaceAll('G','url(#i'+ic.n+')')+'</svg>';}
+  function ic(inner){return '<svg viewBox="0 0 24 24" fill="none">'+inner.replaceAll('G','currentColor')+'</svg>';}
   const ICONS={
     ic_mic:'<rect x="9" y="3" width="6" height="10" rx="3" fill="G"/><path d="M6 11a6 6 0 0 0 12 0" stroke="G" stroke-width="1.7" stroke-linecap="round"/><path d="M12 17v3" stroke="G" stroke-width="1.7" stroke-linecap="round"/>',
     ic_note:'<rect x="6" y="4" width="12" height="16" rx="3" stroke="G" stroke-width="1.6"/><path d="M9 9h6M9 12.5h6M9 16h4" stroke="G" stroke-width="1.6" stroke-linecap="round"/>',
     ic_sticky:'<path d="M5 7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v6l-6 6H7a2 2 0 0 1-2-2z" stroke="G" stroke-width="1.6"/><path d="M19 13h-4a2 2 0 0 0-2 2v4" stroke="G" stroke-width="1.6"/>',
     ic_clock:'<circle cx="12" cy="12" r="8" stroke="G" stroke-width="1.6"/><path d="M12 8v4l3 2" stroke="G" stroke-width="1.7" stroke-linecap="round"/>',
     ic_gear:'<circle cx="12" cy="12" r="3.2" stroke="G" stroke-width="1.6"/><path d="M12 4v2.4M12 17.6V20M20 12h-2.4M6.4 12H4M17.7 6.3l-1.7 1.7M8 16l-1.7 1.7M17.7 17.7L16 16M8 8L6.3 6.3" stroke="G" stroke-width="1.6" stroke-linecap="round"/>',
-    cp:'<rect x="8" y="8" width="11" height="11" rx="2.4" stroke="currentColor" stroke-width="1.5"/><path d="M6 15V6a2 2 0 0 1 2-2h8" stroke="currentColor" stroke-width="1.5"/>'
+    cp:'<rect x="8" y="8" width="11" height="11" rx="2.4" stroke="G" stroke-width="1.5"/><path d="M6 15V6a2 2 0 0 1 2-2h8" stroke="G" stroke-width="1.5"/>'
   };
   const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
   const targets=[];
@@ -273,18 +262,15 @@
     if(m&&ICONS[m[1]])targets.push([walker.currentNode,m[1]]);
   }
   targets.forEach(([node,k])=>{
-    const span=document.createElement('span');span.className='ico';
-    span.innerHTML=k==='cp'?'<svg viewBox="0 0 24 24" fill="none">'+ICONS[k]+'</svg>':ic(ICONS[k]);
+    const span=document.createElement('span');span.className='ico';span.innerHTML=ic(ICONS[k]);
     node.parentNode.replaceChild(span,node);
   });
 
-  // nav switching (visual)
   document.querySelectorAll('.nav').forEach(n=>n.addEventListener('click',()=>{
     document.querySelectorAll('.nav').forEach(x=>x.classList.remove('on'));n.classList.add('on');
     ctitle.textContent=n.dataset.t;csub.textContent=n.dataset.sub;
   }));
 
-  // mic state
   let live=false,timer=null;
   const wv=[...document.querySelectorAll('#wv i')],fw=[...document.querySelectorAll('#fw i')];
   function toggle(){
