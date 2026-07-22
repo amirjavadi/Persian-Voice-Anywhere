@@ -124,6 +124,7 @@ dotnet publish Pva.App -c Release -r win-x64 --self-contained \
 | سند | توضیح |
 |-----|-------|
 | [docs/architecture.md](docs/architecture.md) | طراحی سیستم، pipeline، ماژول‌ها، ریسک‌ها |
+| [docs/design-language.md](docs/design-language.md) | زبان طراحی Liquid Glass (پالت، حرکت، آیکون) |
 | [docs/decisions.md](docs/decisions.md) | ثبت تصمیم‌های معماری (ADR) |
 | [docs/roadmap.md](docs/roadmap.md) | milestoneها و scope |
 | [docs/session.md](docs/session.md) | لاگ جاری کار و قدم‌های بعدی |

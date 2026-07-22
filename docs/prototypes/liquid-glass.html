@@ -1,0 +1,358 @@
+<title>Persian Voice Anywhere — زبان طراحی Liquid Glass</title>
+<style>
+  :root{
+    --bg-0:#EAEFF6; --bg-1:#DBE5F1; --bg-2:#CBD9EC;
+    --ink:#0E1726; --muted:#4E5E76;
+    --accent:#13B9AC; --accent-2:#6D5EF6; --rec:#F0567E;
+    --glass-alpha:.55;
+    --glass-bg:rgba(255,255,255,var(--glass-alpha));
+    --glass-brd:rgba(255,255,255,.8);
+    --glass-hi:rgba(255,255,255,.95);
+    --glass-sh:rgba(24,40,72,.20);
+    --tile:rgba(255,255,255,.6);
+    --scene:radial-gradient(120% 120% at 80% 0%,#EAF6FF 0%,#E7ECF8 45%,#E4E2F5 100%);
+    --font-fa:"Vazirmatn","Segoe UI","Tahoma",system-ui,sans-serif;
+    --font-en:"SF Pro Display","Segoe UI Variable Display","Segoe UI",system-ui,sans-serif;
+    --font-mono:"SF Mono","Cascadia Code","Consolas",ui-monospace,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg-0:#060A13; --bg-1:#0A1120; --bg-2:#0E1730;
+      --ink:#EAF2FB; --muted:#94A6C0;
+      --glass-alpha:.10;
+      --glass-bg:rgba(255,255,255,var(--glass-alpha));
+      --glass-brd:rgba(255,255,255,.16);
+      --glass-hi:rgba(255,255,255,.55);
+      --glass-sh:rgba(0,0,0,.45);
+      --tile:rgba(255,255,255,.07);
+      --scene:radial-gradient(130% 120% at 85% -10%,#0b1e2c 0%,#0a1120 45%,#0d0b22 100%);
+    }
+  }
+  :root[data-theme="light"]{
+    --bg-0:#EAEFF6; --bg-1:#DBE5F1; --bg-2:#CBD9EC;
+    --ink:#0E1726; --muted:#4E5E76; --glass-alpha:.55;
+    --glass-brd:rgba(255,255,255,.8); --glass-hi:rgba(255,255,255,.95);
+    --glass-sh:rgba(24,40,72,.20); --tile:rgba(255,255,255,.6);
+    --scene:radial-gradient(120% 120% at 80% 0%,#EAF6FF 0%,#E7ECF8 45%,#E4E2F5 100%);
+  }
+  :root[data-theme="dark"]{
+    --bg-0:#060A13; --bg-1:#0A1120; --bg-2:#0E1730;
+    --ink:#EAF2FB; --muted:#94A6C0; --glass-alpha:.10;
+    --glass-brd:rgba(255,255,255,.16); --glass-hi:rgba(255,255,255,.55);
+    --glass-sh:rgba(0,0,0,.45); --tile:rgba(255,255,255,.07);
+    --scene:radial-gradient(130% 120% at 85% -10%,#0b1e2c 0%,#0a1120 45%,#0d0b22 100%);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font-fa);color:var(--ink);background:var(--bg-0);
+    -webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .wrap{direction:rtl;min-height:100vh;position:relative;
+    background:var(--scene);padding:clamp(16px,3vw,40px)}
+
+  /* ambient aurora that the glass refracts */
+  .aurora{position:fixed;inset:-20%;z-index:0;filter:blur(60px);opacity:.9;pointer-events:none}
+  .blob{position:absolute;border-radius:50%;mix-blend-mode:normal;animation:drift 22s ease-in-out infinite}
+  .b1{width:44vw;height:44vw;left:-6vw;top:-8vw;background:radial-gradient(circle,#19c8bb,transparent 65%);opacity:.55}
+  .b2{width:40vw;height:40vw;right:-6vw;top:6vh;background:radial-gradient(circle,#6d5ef6,transparent 65%);opacity:.5;animation-delay:-6s}
+  .b3{width:36vw;height:36vw;left:24vw;bottom:-14vw;background:radial-gradient(circle,#f0567e,transparent 65%);opacity:.4;animation-delay:-12s}
+  @keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(4vw,3vh) scale(1.08)}66%{transform:translate(-3vw,-2vh) scale(.96)}}
+
+  .stage{position:relative;z-index:1;max-width:1080px;margin:0 auto}
+
+  header.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:clamp(20px,4vh,44px)}
+  .brand{display:flex;align-items:center;gap:14px}
+  .brand .logo{width:46px;height:46px;flex:0 0 auto}
+  .brand h1{font-family:var(--font-en);font-size:clamp(17px,2.2vw,22px);font-weight:700;letter-spacing:-.01em;line-height:1.1}
+  .brand p{font-size:12.5px;color:var(--muted);margin-top:2px}
+
+  /* GLASS */
+  .glass{position:relative;background:var(--glass-bg);
+    -webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%);
+    border:1px solid var(--glass-brd);border-radius:26px;
+    box-shadow:0 18px 50px -12px var(--glass-sh),inset 0 1px 0 var(--glass-hi),inset 0 -24px 60px -30px rgba(255,255,255,.12);
+    overflow:hidden}
+  .glass::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(130% 90% at 15% -10%,rgba(255,255,255,.35),transparent 46%)}
+  .glass::after{content:"";position:absolute;left:-40%;top:0;width:40%;height:100%;pointer-events:none;
+    background:linear-gradient(105deg,transparent,rgba(255,255,255,.28),transparent);
+    transform:skewX(-18deg);animation:sheen 7s ease-in-out infinite}
+  @keyframes sheen{0%,72%{left:-45%}86%{left:130%}100%{left:130%}}
+
+  .theme{display:flex;gap:6px;padding:5px}
+  .theme button{font-family:var(--font-en);cursor:pointer;border:0;background:transparent;color:var(--muted);
+    font-size:12px;font-weight:600;padding:7px 13px;border-radius:14px;transition:.25s}
+  .theme button.on{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;
+    box-shadow:0 6px 18px -6px var(--accent)}
+
+  /* main layout */
+  .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(18px,2.4vw,30px);align-items:stretch}
+  @media(max-width:820px){.hero{grid-template-columns:1fr}}
+
+  .mic-card{padding:34px 30px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;min-height:340px}
+  .orb{position:relative;width:190px;height:190px;cursor:pointer;user-select:none}
+  .orb .ring{position:absolute;inset:0;border-radius:50%;
+    background:conic-gradient(from 210deg,var(--accent),var(--accent-2),var(--rec),var(--accent));
+    filter:blur(2px);opacity:.9;animation:spin 9s linear infinite}
+  .orb .core{position:absolute;inset:12px;border-radius:50%;
+    background:radial-gradient(60% 60% at 35% 30%,rgba(255,255,255,.85),rgba(255,255,255,.05) 60%),
+      radial-gradient(120% 120% at 70% 80%,var(--accent-2),var(--accent));
+    box-shadow:inset 0 2px 12px rgba(255,255,255,.6),inset 0 -18px 40px rgba(0,0,0,.25),0 20px 50px -10px var(--accent);
+    display:flex;align-items:center;justify-content:center;transition:transform .5s cubic-bezier(.2,.9,.2,1.2)}
+  .orb .halo{position:absolute;inset:-18px;border-radius:50%;border:1.5px solid var(--accent);opacity:0}
+  .orb.live .core{animation:breathe 2.2s ease-in-out infinite}
+  .orb.live .halo{animation:pulse 2.2s ease-out infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+  @keyframes pulse{0%{opacity:.6;transform:scale(.9)}100%{opacity:0;transform:scale(1.5)}}
+  .wave{display:flex;align-items:center;gap:4px;height:40px}
+  .wave i{width:4px;height:8px;border-radius:4px;background:#fff;opacity:.92;transition:height .12s ease}
+  .mic-glyph{width:56px;height:56px}
+  .state{text-align:center}
+  .state b{font-family:var(--font-en);font-size:15px;font-weight:700;letter-spacing:.02em}
+  .state span{display:block;font-size:12.5px;color:var(--muted);margin-top:4px}
+  .hint{font-size:11.5px;color:var(--muted);opacity:.8}
+
+  /* typing demo window */
+  .demo{padding:20px;display:flex;flex-direction:column;gap:14px}
+  .demo .bar{display:flex;align-items:center;gap:8px}
+  .demo .dot{width:11px;height:11px;border-radius:50%;background:var(--tile)}
+  .demo .dot:nth-child(1){background:#ff6058}.demo .dot:nth-child(2){background:#ffbd2e}.demo .dot:nth-child(3){background:#28c840}
+  .demo .title{font-family:var(--font-en);font-size:11.5px;color:var(--muted);margin-inline-start:6px}
+  .demo .field{flex:1;background:var(--tile);border-radius:16px;padding:18px;min-height:150px;
+    border:1px solid var(--glass-brd);font-size:15px;line-height:2}
+  .demo .field .en{font-family:var(--font-en);font-weight:600}
+  .caret{display:inline-block;width:2px;height:1.1em;background:var(--accent);vertical-align:-2px;
+    margin-inline-start:2px;animation:blink 1s step-end infinite}
+  @keyframes blink{50%{opacity:0}}
+  .demo .cmd{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--muted)}
+  .chip{font-family:var(--font-en);font-size:11px;padding:4px 10px;border-radius:11px;
+    background:linear-gradient(135deg,rgba(19,185,172,.18),rgba(109,94,246,.18));
+    border:1px solid var(--glass-brd);color:var(--ink)}
+
+  /* showcase row */
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,2.4vw,30px);margin-top:clamp(18px,2.4vw,30px)}
+  @media(max-width:820px){.row{grid-template-columns:1fr}}
+  .card-h{display:flex;align-items:center;gap:10px;padding:18px 20px 0}
+  .card-h h3{font-size:14.5px;font-weight:700}
+  .card-h .k{font-family:var(--font-en);font-size:10.5px;color:var(--muted);margin-inline-start:auto;
+    letter-spacing:.08em;text-transform:uppercase}
+
+  .menu{padding:14px}
+  .menu a{display:flex;align-items:center;gap:13px;padding:12px 14px;border-radius:16px;cursor:pointer;
+    text-decoration:none;color:var(--ink);font-size:14px;font-weight:500;transition:.22s;position:relative}
+  .menu a:hover{background:var(--tile);transform:translateX(-4px)}
+  .menu a .ico{width:34px;height:34px;flex:0 0 auto}
+  .menu a small{margin-inline-start:auto;font-family:var(--font-en);font-size:11px;color:var(--muted)}
+
+  .settings{padding:8px 20px 22px}
+  .set{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--glass-brd)}
+  .set:last-child{border-bottom:0}
+  .set .ico{width:30px;height:30px}
+  .set .lbl b{font-size:13.5px;font-weight:600;display:block}
+  .set .lbl span{font-size:11.5px;color:var(--muted)}
+  .set .ctrl{margin-inline-start:auto}
+  .sw{width:50px;height:29px;border-radius:16px;background:var(--tile);border:1px solid var(--glass-brd);
+    position:relative;cursor:pointer;transition:.3s}
+  .sw::after{content:"";position:absolute;top:2px;inset-inline-end:2px;width:23px;height:23px;border-radius:50%;
+    background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.25);transition:.32s cubic-bezier(.3,.9,.3,1.4)}
+  .sw.on{background:linear-gradient(135deg,var(--accent),var(--accent-2));border-color:transparent}
+  .sw.on::after{inset-inline-end:24px}
+  .slider{width:130px;height:8px;border-radius:6px;background:var(--tile);position:relative;cursor:pointer}
+  .slider .fill{position:absolute;inset:0;width:62%;border-radius:6px;background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+  .slider .knob{position:absolute;top:50%;inset-inline-end:38%;width:18px;height:18px;border-radius:50%;background:#fff;
+    transform:translateY(-50%);box-shadow:0 3px 10px rgba(0,0,0,.3)}
+
+  /* icon gallery */
+  .gallery{margin-top:clamp(18px,2.4vw,30px);padding:24px}
+  .gallery .lead{display:flex;align-items:baseline;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+  .gallery h3{font-size:15px;font-weight:700}
+  .gallery .lead p{font-size:12.5px;color:var(--muted)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:14px}
+  .tile{aspect-ratio:1;border-radius:22px;background:var(--tile);border:1px solid var(--glass-brd);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;cursor:pointer;
+    transition:.3s cubic-bezier(.2,.8,.2,1.2);position:relative;overflow:hidden}
+  .tile::before{content:"";position:absolute;inset:0;background:radial-gradient(90% 70% at 20% 0%,rgba(255,255,255,.4),transparent 55%)}
+  .tile:hover{transform:translateY(-6px) scale(1.04);box-shadow:0 16px 34px -12px var(--glass-sh)}
+  .tile svg{width:40px;height:40px;position:relative}
+  .tile span{font-size:10.5px;color:var(--muted);position:relative}
+
+  footer{margin:26px auto 8px;max-width:1080px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center}
+  .sw-chip{display:flex;align-items:center;gap:8px;font-family:var(--font-en);font-size:11.5px;color:var(--muted);
+    padding:8px 14px;border-radius:14px;background:var(--glass-bg);border:1px solid var(--glass-brd)}
+  .dotc{width:13px;height:13px;border-radius:5px}
+
+  @media (prefers-reduced-motion:reduce){
+    .blob,.orb .ring,.orb.live .core,.orb.live .halo,.glass::after,.caret{animation:none!important}
+  }
+</style>
+
+<div class="wrap">
+  <div class="aurora"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+  <div class="stage">
+    <header class="top">
+      <div class="brand">
+        <svg class="logo" viewBox="0 0 48 48" fill="none">
+          <defs>
+            <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#22D3C5"/><stop offset="1" stop-color="#6D5EF6"/>
+            </linearGradient>
+          </defs>
+          <rect x="3" y="3" width="42" height="42" rx="14" fill="url(#lg)" opacity=".18"/>
+          <rect x="3" y="3" width="42" height="42" rx="14" stroke="url(#lg)" stroke-width="1.4"/>
+          <rect x="18" y="11" width="12" height="19" rx="6" fill="url(#lg)"/>
+          <path d="M13 25a11 11 0 0 0 22 0" stroke="url(#lg)" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+          <path d="M24 36v4" stroke="url(#lg)" stroke-width="2.6" stroke-linecap="round"/>
+          <circle cx="35" cy="13" r="4.5" fill="#fff" opacity=".7"/>
+        </svg>
+        <div>
+          <h1>Persian Voice Anywhere</h1>
+          <p>زبان طراحی · Liquid Glass</p>
+        </div>
+      </div>
+      <div class="glass theme">
+        <button id="tl" onclick="setTheme('light')">روشن</button>
+        <button id="td" onclick="setTheme('dark')">تیره</button>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="glass mic-card">
+        <div class="orb" id="orb" onclick="toggleMic()">
+          <div class="ring"></div>
+          <div class="halo"></div>
+          <div class="core" id="core">
+            <svg class="mic-glyph" id="micGlyph" viewBox="0 0 24 24" fill="none">
+              <rect x="9" y="3" width="6" height="11" rx="3" fill="#fff"/>
+              <path d="M6 12a6 6 0 0 0 12 0" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+              <path d="M12 18v3" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <div class="wave" id="wave" style="display:none">
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            </div>
+          </div>
+        </div>
+        <div class="state">
+          <b id="stTitle">آماده</b>
+          <span id="stSub">برای شروع دیکته، ضربه بزن · Ctrl+Space</span>
+        </div>
+        <div class="hint">میکروفون شناور · Always-On-Top · شفافیت قابل‌تنظیم</div>
+      </div>
+
+      <div class="glass demo">
+        <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="title">Untitled — Notepad</span></div>
+        <div class="field">
+          امروز یک <span class="en">Pull Request</span> روی <span class="en">GitHub</span> زدم<span class="caret"></span>
+        </div>
+        <div class="cmd">
+          دستورهای صوتی:
+          <span class="chip">خط بعد</span>
+          <span class="chip">ویرگول</span>
+          <span class="chip">پاراگراف جدید</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="row">
+      <div class="glass">
+        <div class="card-h"><h3>منوی سریع</h3><span class="k">System Tray</span></div>
+        <div class="menu">
+          <a><span class="ico">{{ic_rec}}</span>شروع ضبط<small>Ctrl+Space</small></a>
+          <a><span class="ico">{{ic_stop}}</span>توقف ضبط<small>Esc</small></a>
+          <a><span class="ico">{{ic_note}}</span>نوت‌پد داخلی<small>Ctrl+N</small></a>
+          <a><span class="ico">{{ic_gear}}</span>تنظیمات</a>
+        </div>
+      </div>
+
+      <div class="glass">
+        <div class="card-h"><h3>تنظیمات سریع</h3><span class="k">Fluent · Glass</span></div>
+        <div class="settings">
+          <div class="set">
+            <span class="ico">{{ic_gpu}}</span>
+            <div class="lbl"><b>شتاب GPU</b><span>در صورت وجود کارت گرافیک</span></div>
+            <div class="ctrl"><div class="sw on" onclick="this.classList.toggle('on')"></div></div>
+          </div>
+          <div class="set">
+            <span class="ico">{{ic_wand}}</span>
+            <div class="lbl"><b>اصلاح هوشمند فارسی</b><span>نیم‌فاصله و علائم نگارشی</span></div>
+            <div class="ctrl"><div class="sw on" onclick="this.classList.toggle('on')"></div></div>
+          </div>
+          <div class="set">
+            <span class="ico">{{ic_eye}}</span>
+            <div class="lbl"><b>شفافیت پنجره</b><span>میکروفون شناور</span></div>
+            <div class="ctrl"><div class="slider"><div class="fill"></div><div class="knob"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="glass gallery">
+      <div class="lead"><h3>آیکون‌های شیشه‌ای اختصاصی</h3><p>duotone با گرادیان فیروزه‌ای–بنفش، های‌لایت شیشه‌ای و عمق نرم — نه آیکون‌های معمول.</p></div>
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <footer>
+      <span class="sw-chip"><span class="dotc" style="background:#13B9AC"></span>Persian Turquoise · #13B9AC</span>
+      <span class="sw-chip"><span class="dotc" style="background:#6D5EF6"></span>Violet · #6D5EF6</span>
+      <span class="sw-chip"><span class="dotc" style="background:#F0567E"></span>Rec · #F0567E</span>
+      <span class="sw-chip">Motion: spring · breathe · sheen · liquid</span>
+    </footer>
+  </div>
+</div>
+
+<script>
+  const root=document.documentElement;
+  function setTheme(t){root.setAttribute('data-theme',t);
+    document.getElementById('tl').classList.toggle('on',t==='light');
+    document.getElementById('td').classList.toggle('on',t==='dark');}
+  // initial button highlight from current scheme
+  (function(){const dark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+    document.getElementById(dark?'td':'tl').classList.add('on');})();
+
+  let live=false,waveTimer=null;
+  const orb=document.getElementById('orb'),wave=document.getElementById('wave'),
+        glyph=document.getElementById('micGlyph'),bars=[...document.querySelectorAll('.wave i')];
+  function toggleMic(){
+    live=!live;orb.classList.toggle('live',live);
+    document.getElementById('stTitle').textContent=live?'در حال شنیدن…':'آماده';
+    document.getElementById('stSub').textContent=live?'صحبت کن؛ متن فارسی همان‌جا تایپ می‌شود':'برای شروع دیکته، ضربه بزن · Ctrl+Space';
+    wave.style.display=live?'flex':'none';glyph.style.display=live?'none':'block';
+    if(live){waveTimer=setInterval(()=>bars.forEach(b=>b.style.height=(6+Math.random()*30)+'px'),120);}
+    else{clearInterval(waveTimer);}
+  }
+
+  // custom glass icons
+  const G='<defs><linearGradient id="g%" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22D3C5"/><stop offset="1" stop-color="#6D5EF6"/></linearGradient></defs>';
+  function icon(id,inner){return '<svg viewBox="0 0 40 40" fill="none">'+G.replace(/%/g,id)+
+    '<rect x="4" y="4" width="32" height="32" rx="11" fill="url(#g'+id+')" opacity=".16"/>'+
+    '<rect x="4.6" y="4.6" width="30.8" height="30.8" rx="10.4" stroke="url(#g'+id+')" stroke-width="1.1" opacity=".8"/>'+
+    inner+'</svg>';}
+  const A='url(#g%)';
+  const ICONS={
+    ic_mic:['میکروفون','<rect x="16" y="11" width="8" height="13" rx="4" fill="G"/><path d="M12 20a8 8 0 0 0 16 0" stroke="G" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M20 28v4" stroke="G" stroke-width="2" stroke-linecap="round"/>'],
+    ic_rec:['ضبط','<circle cx="20" cy="20" r="7" fill="G"/><circle cx="20" cy="20" r="10.5" stroke="G" stroke-width="1.6" opacity=".5"/>'],
+    ic_stop:['توقف','<rect x="13" y="13" width="14" height="14" rx="4.5" fill="G"/>'],
+    ic_wave:['موج صدا','<path d="M11 20h2M15 15v10M19 11v18M23 14v12M27 17v6M31 20h-2" stroke="G" stroke-width="2.4" stroke-linecap="round"/>'],
+    ic_note:['نوت‌پد','<rect x="12" y="11" width="16" height="18" rx="3.5" fill="G" opacity=".28"/><rect x="12" y="11" width="16" height="18" rx="3.5" stroke="G" stroke-width="1.6"/><path d="M16 17h8M16 21h8M16 25h5" stroke="G" stroke-width="1.8" stroke-linecap="round"/>'],
+    ic_sticky:['یادداشت','<path d="M12 13a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v9l-7 7H14a2 2 0 0 1-2-2z" fill="G" opacity=".28"/><path d="M12 13a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v9l-7 7H14a2 2 0 0 1-2-2z" stroke="G" stroke-width="1.6"/><path d="M28 22h-5a2 2 0 0 0-2 2v5" stroke="G" stroke-width="1.6"/>'],
+    ic_clip:['کلیپ‌بورد','<rect x="13" y="12" width="14" height="17" rx="3" stroke="G" stroke-width="1.6"/><rect x="16" y="9.5" width="8" height="5" rx="2.2" fill="G"/><path d="M17 20h6M17 24h4" stroke="G" stroke-width="1.7" stroke-linecap="round"/>'],
+    ic_wand:['اصلاح هوشمند','<path d="M13 27l11-11" stroke="G" stroke-width="2.6" stroke-linecap="round"/><path d="M24 12l1.4 2.6L28 16l-2.6 1.4L24 20l-1.4-2.6L20 16l2.6-1.4z" fill="G"/><circle cx="16" cy="13" r="1.6" fill="G"/><circle cx="29" cy="24" r="1.4" fill="G"/>'],
+    ic_key:['کیبورد','<rect x="10" y="14" width="20" height="13" rx="3" stroke="G" stroke-width="1.6"/><path d="M14 18h.01M18 18h.01M22 18h.01M26 18h.01M15 22h10" stroke="G" stroke-width="2" stroke-linecap="round"/>'],
+    ic_gear:['تنظیمات','<circle cx="20" cy="20" r="4" stroke="G" stroke-width="2"/><path d="M20 10v3M20 27v3M30 20h-3M13 20h-3M27 13l-2 2M15 25l-2 2M27 27l-2-2M15 15l-2-2" stroke="G" stroke-width="2" stroke-linecap="round"/>'],
+    ic_gpu:['GPU','<rect x="11" y="14" width="18" height="12" rx="2.5" stroke="G" stroke-width="1.6"/><rect x="15" y="18" width="6" height="4" rx="1" fill="G"/><path d="M14 26v3M24 26v3" stroke="G" stroke-width="1.8" stroke-linecap="round"/>'],
+    ic_eye:['شفافیت','<path d="M10 20s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z" stroke="G" stroke-width="1.7"/><circle cx="20" cy="20" r="3.2" fill="G"/>']
+  };
+  function build(id){const [,inner]=ICONS[id];return icon(id,inner.replaceAll('G',A.replace('%',id)));}
+  // fill placeholders in menu/settings
+  document.querySelectorAll('.ico').forEach(el=>{
+    const m=el.textContent.trim().match(/\{\{(\w+)\}\}/);
+    if(m&&ICONS[m[1]])el.innerHTML=build(m[1]);
+  });
+  // gallery
+  const grid=document.getElementById('grid');
+  Object.keys(ICONS).forEach(id=>{
+    const [label]=ICONS[id];
+    const d=document.createElement('div');d.className='tile';
+    d.innerHTML=build(id)+'<span>'+label+'</span>';grid.appendChild(d);
+  });
+</script>

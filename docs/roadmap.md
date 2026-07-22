@@ -75,9 +75,12 @@
 - **تست:** تشخیص دستور در برابر دیکته‌ی واقعی همان واژه.
 
 ### M7 — UI هسته ⬜
+- پیاده‌سازی زبان طراحی **Liquid Glass** (`docs/design-language.md`, ADR-0012):
+  WPF-UI + Mica/Acrylic، سطوح شیشه، آیکون‌های شیشه‌ای اختصاصی، حرکت spring.
 - System Tray + منوی سریع؛ میکروفون شناور (topmost، draggable، شفافیت، مخفی‌شونده)؛
-  پنجره‌ی تنظیمات (Fluent، Dark/Light، High-DPI).
-- **تست:** تست ViewModelها؛ QA بصری با `/design-review`.
+  پنجره‌ی تنظیمات (Dark/Light، High-DPI).
+- **گاردریل کارایی:** انیمیشن فقط هنگام فعال، احترام به reduced-motion، تنزل graceful.
+- **تست:** تست ViewModelها؛ QA بصری با `/design-review`؛ سنجش Idle CPU با افکت‌ها فعال.
 
 ### M8 — نوت‌پد داخلی ⬜
 - ویرایشگر تب‌دار (AvalonEdit): جستجو/جایگزینی، Word Wrap، RTL، Undo/Redo،
