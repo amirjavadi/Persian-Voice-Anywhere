@@ -1,0 +1,23 @@
+<Project>
+
+  <!-- Shared settings for every project in the solution. Per-project TargetFramework
+       stays in each .csproj. See CLAUDE.md §8 for coding standards. -->
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <Product>Persian Voice Anywhere</Product>
+    <Authors>Amir Javadi</Authors>
+    <Company>Persian Voice Anywhere</Company>
+    <RepositoryUrl>https://github.com/amirjavadi/Persian-Voice-Anywhere</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <!-- Release builds are strict: warnings are errors so CI catches regressions. -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+</Project>

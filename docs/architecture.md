@@ -185,7 +185,8 @@ providerهای بازنویسی). بارگذاری از پوشه‌ی `plugins/`
 
 ## ۱۳. تست
 
-xUnit + FluentAssertions. Unit برای `PersianText` (golden)، `Commands`، `Storage`،
+xUnit (Assert خالص؛ در صورت نیاز Shouldly، مجوز MIT — نه FluentAssertions، ADR-0010).
+Unit برای `PersianText` (golden)، `Commands`، `Storage`،
 adapterهای موتور (mock). Integration برای pipeline کامل. Performance با
 BenchmarkDotNet (شروع، Idle CPU، RAM). تست نشت حافظه با سنجه‌ها و سناریوهای طولانی.
 

@@ -169,4 +169,40 @@ NOTICE پیش از انتشار نسخه اضافه می‌شود.
 
 **پیامد:** رعایت attribution کامپوننت‌ها الزامی است.
 
+---
+
+## ADR-0010 — پرهیز از FluentAssertions؛ استفاده از xUnit خالص (و در صورت نیاز Shouldly)
+
+**وضعیت:** پذیرفته · 2026-07-22 · جایگزینِ ذکر FluentAssertions در ADRها/مستندات قبلی
+
+**زمینه:** در ابتدا FluentAssertions به‌عنوان کتابخانه‌ی assertion در نظر گرفته شد.
+اما FluentAssertions از نسخه‌ی ۸ برای استفاده‌ی تجاری مجوز پولی دارد که با ماهیت
+MIT/رایگان پروژه در تضاد است.
+
+**تصمیم:** در تست‌ها از `Assert` خالص xUnit استفاده می‌کنیم؛ در صورت نیاز به سبک
+fluent، از **Shouldly** (مجوز MIT) بهره می‌بریم. FluentAssertions اضافه نمی‌شود.
+
+**دلیل:** حذف ریسک مجوزی و هزینه، حفظ سادگی.
+
+**پیامد:** مستندات (`CLAUDE.md`، `architecture.md`) از FluentAssertions به این
+تصمیم به‌روزرسانی شدند.
+
+---
+
+## ADR-0011 — سخت‌گیری کیفیت کد از M0
+
+**وضعیت:** پذیرفته · 2026-07-22
+
+**زمینه:** برای محصول تجاری قابل‌نگهداری، کیفیت باید از ابتدا اجرا شود.
+
+**تصمیم:** `Directory.Build.props` مشترک با `Nullable`، `AnalysisLevel=latest-recommended`،
+`EnforceCodeStyleInBuild` و **`TreatWarningsAsErrors` در حالت Release**.
+`.editorconfig` قوانین سبک را اعمال می‌کند (namespace فایل‌اسکوپ، modifierها،
+مرتب‌سازی usingها). CI روی هر push/PR، Release را build و test می‌کند.
+
+**دلیل:** خطاهای سبک و کیفیت زودتر و به‌صورت خودکار گرفته می‌شوند.
+
+**پیامد:** برخی قوانین برای موارد خاص تنظیم شدند (مثلاً CA1707 در پروژه‌ی تست خاموش،
+`require_accessibility_modifiers = for_non_interface_members`).
+
 </div>

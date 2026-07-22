@@ -15,7 +15,7 @@
 
 | Milestone | عنوان | خروجی | وضعیت |
 |-----------|-------|-------|-------|
-| M0 | داربست و زیرساخت | solution، DI، logging، CI، تست نمونه | ⬜ |
+| M0 | داربست و زیرساخت | solution، DI، logging، CI، تست نمونه | ✅ |
 | M1 | ضبط صدا + VAD | `Pva.Audio` با WASAPI و Silero VAD | ⬜ |
 | M2 | موتور STT هیبرید | whisper.cpp کارکردی + adapter Faster Whisper | ⬜ |
 | M3 | پس‌پردازش فارسی | `Pva.PersianText` + تست‌های golden | ⬜ |
@@ -31,13 +31,15 @@
 
 ## جزئیات Milestoneها
 
-### M0 — داربست و زیرساخت ⬜
-- solution و پروژه‌ها طبق نقشه‌ی `architecture.md` §۴.
-- DI (Microsoft.Extensions.Hosting)، Serilog، `.editorconfig`، Directory.Build.props.
-- `Pva.Tests` با یک تست نمونه؛ اجرای `dotnet test` سبز.
-- CI (GitHub Actions): build + test روی هر push/PR.
-- **تست:** build و test سبز؛ اجرای خالی `Pva.App` بدون خطا.
-- **دروازه:** تأیید مالک برای M1.
+### M0 — داربست و زیرساخت ✅
+- ✅ solution و ۱۳ پروژه طبق نقشه‌ی `architecture.md` §۴ (`src/` و `tests/`).
+- ✅ DI (Microsoft.Extensions.Hosting) + Serilog (فایل چرخشی کنار exe) در `Pva.App`.
+- ✅ `.editorconfig`، `Directory.Build.props` (Release = warnings-as-errors).
+- ✅ قراردادهای `Pva.Core` (اینترفیس‌های همه‌ی درزها + record modelها).
+- ✅ `Pva.Tests` با ۴ تست دود؛ **`dotnet test` سبز (۴/۴)**.
+- ✅ CI (GitHub Actions): build + test روی هر push/PR.
+- **نتیجه‌ی تست:** Build حالت Release با ۰ warning/۰ error؛ ۴ تست پاس.
+- **دروازه:** ✅ انجام شد — منتظر تأیید مالک برای M1.
 
 ### M1 — ضبط صدا + VAD ⬜
 - `IAudioCapture` با WASAPI (NAudio)، ۱۶kHz مونو.

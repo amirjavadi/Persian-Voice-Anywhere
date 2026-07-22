@@ -13,7 +13,7 @@ dotnet_sort_system_directives_first = true
 csharp_new_line_before_open_brace = all
 csharp_prefer_braces = true:warning
 dotnet_style_qualification_for_field = false:warning
-dotnet_style_require_accessibility_modifiers = always:warning
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:warning
 csharp_style_var_when_type_is_apparent = true:suggestion
 dotnet_diagnostic.CA2007.severity = none   # ConfigureAwait not required in app code
 dotnet_style_namespace_match_folder = true:warning
@@ -27,3 +27,8 @@ indent_size = 2
 
 [*.md]
 trim_trailing_whitespace = false
+
+# Test projects: underscore-based method names are the idiomatic xUnit convention
+# (Method_Scenario_Expectation), so CA1707 does not apply.
+[tests/**/*.cs]
+dotnet_diagnostic.CA1707.severity = none

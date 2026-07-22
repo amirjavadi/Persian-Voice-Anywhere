@@ -38,7 +38,7 @@
 | ذخیره‌سازی         | SQLite (Microsoft.Data.Sqlite) + تنظیمات JSON کنار exe        |
 | اطلاعات حساس       | DPAPI (محلی) / AES با رمز عبور (برای secretهای پرتابل)         |
 | Logging            | Serilog (فایل چرخشی کنار exe، بدون PII)                        |
-| تست                | xUnit + FluentAssertions؛ BenchmarkDotNet برای perf           |
+| تست                | xUnit (Assert خالص؛ در صورت نیاز Shouldly-MIT)؛ BenchmarkDotNet برای perf |
 | بسته‌بندی          | ZIP پرتابل + EXE تک‌فایل (پایه)؛ MSIX + auto-update بعداً      |
 
 بدون ثبت یک ADR در `docs/decisions.md` و یک خط دلیل، هیچ وابستگی جدیدی اضافه نکن.

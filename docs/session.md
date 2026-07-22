@@ -39,15 +39,32 @@
 - حافظه‌ی ماندگار (`memory/`) + `MEMORY.md`.
 - commit اولیه ساخته و به GitHub (عمومی، MIT) push شد. ✅
 
+## سشن ۲ — 2026-07-22 — M0 (داربست و زیرساخت) ✅
+
+**انجام‌شده:**
+- solution `PersianVoiceAnywhere.sln` + ۱۳ پروژه (`src/Pva.*` و `tests/Pva.Tests`).
+- TFMها: لایه‌های خالص net10.0؛ Audio/Injection/Hotkeys/App/Notepad/StickyNotes = net10.0-windows.
+- `Directory.Build.props` (Nullable، AnalysisLevel، Release=warnings-as-errors) + `.editorconfig`.
+- قراردادهای `Pva.Core`: `IAudioCapture`, `ISpeechToTextEngine`, `IPersianTextProcessor`,
+  `ITextInjector`, `IHotkeyService`, `ICommandParser` + record modelها + `DictationState`.
+- `Pva.App`: composition root با Generic Host + DI + Serilog (لاگ چرخشی در `logs/` کنار exe)،
+  راه‌اندازی/خاموشی تمیز، پنجره‌ی معرفی RTL.
+- `Pva.Tests`: ۴ تست دود روی قراردادهای Core.
+- تصمیم جدید: پرهیز از FluentAssertions به‌دلیل مجوز تجاری (ADR-0010)؛ سخت‌گیری کیفیت (ADR-0011).
+
+**نتیجه:** `dotnet build -c Release` → ۰ warning / ۰ error. `dotnet test` → ۴/۴ پاس. ✅
+
 ## قدم بعدی
 
-1. **دریافت تأیید مالک برای شروع M0** (داربست و زیرساخت). طبق پروتکل، بدون تأیید
-   وارد کدنویسی نمی‌شویم.
+1. **دریافت تأیید مالک برای شروع M1** (ضبط صدا + VAD در `Pva.Audio`). طبق پروتکل،
+   بدون تأیید وارد milestone بعد نمی‌شویم.
 
 ## نکات باز / بلاکرها
 
 - **نام کپی‌رایت:** روی «Amir Javadi» (بر اساس اکانت `amirjavadi`) تنظیم شد؛ در صورت
   نیاز اصلاح شود.
+- **اجرای GUI:** صحت اسکلت با build تأیید شد؛ اجرای واقعی پنجره‌ی `Pva.App` روی دسکتاپ
+  به‌صورت دستی قابل بررسی است (`dotnet run --project src/Pva.App`).
 - **مدل‌های Whisper:** جدا از مخزن توزیع می‌شوند؛ استراتژی دانلود در اولین اجرا در M2.
 
 </div>
