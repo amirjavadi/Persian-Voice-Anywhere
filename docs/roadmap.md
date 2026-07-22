@@ -120,6 +120,9 @@ build-out کامل M4–M10 برداشت («تا آخر برو»)؛ بنابرا
 - ✅ نسخه‌گذاری (`Version=0.1.0`)؛ `build/publish-portable.ps1` (Release، self-contained،
   single-file → `publish/portable` + ZIP)؛ `THIRD-PARTY-NOTICES.md` (مجوز کامپوننت‌ها).
 - ✅ تنظیمات و لاگ و مدل‌ها کنار exe (پرتابل، بدون رجیستری).
+- ✅ **انتشار پرتابل تأیید شد:** `Pva.App.exe` تک‌فایلِ self-contained تولید شد (شامل
+  .NET runtime + WPF + native whisper/onnx). سخت‌سازی بعدی: فعال‌کردن فشرده‌سازی
+  single-file، حذف pdb/lib/`ggml-metal.metal` غیرضروری، افزودن آیکون اپ.
 - **باقی‌مانده (نیاز به محیط/گواهی):** سنجش perf واقعی (شروع < ۲s، Idle CPU < ۲٪، RAM)،
   تست نشت حافظه، امضای کد (Code Signing)، آیکون اپ. MSIX + auto-update در backlog.
 - **خروجی:** اسکلت انتشار v1 آماده؛ برای انتشار نهایی، مدل‌ها + امضا + سنجش perf لازم است.
