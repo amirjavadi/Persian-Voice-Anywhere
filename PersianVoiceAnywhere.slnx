@@ -12,6 +12,7 @@
     <Project Path="src/Pva.StickyNotes/Pva.StickyNotes.csproj" />
     <Project Path="src/Pva.Storage/Pva.Storage.csproj" />
     <Project Path="src/Pva.Stt/Pva.Stt.csproj" />
+    <Project Path="src/Pva.TextExpansion/Pva.TextExpansion.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Pva.Tests/Pva.Tests.csproj" />

@@ -18,6 +18,7 @@ using Pva.PersianText;
 using Pva.StickyNotes;
 using Pva.Storage;
 using Pva.Stt;
+using Pva.TextExpansion;
 using Serilog;
 
 namespace Pva.App;
@@ -92,6 +93,7 @@ public partial class App : Application
         services.AddSettings();
         services.AddPersianText();
         services.AddVoiceCommands();
+        services.AddTextExpansion();
         services.AddTextInjection();
         services.AddHotkeys();
         services.AddAudioCapture(new AudioCaptureOptions { VadModelPath = settings.VadModelPath });

@@ -25,6 +25,7 @@ public sealed class DictationOrchestrator : IAsyncDisposable
     private readonly ICommandParser _parser;
     private readonly IPersianTextProcessor _persian;
     private readonly ITextInjector _injector;
+    private readonly ITextExpander? _expander;
     private readonly DictationOptions _options;
     private readonly SemaphoreSlim _processing = new(1, 1);
 
@@ -34,13 +35,15 @@ public sealed class DictationOrchestrator : IAsyncDisposable
         ICommandParser parser,
         IPersianTextProcessor persian,
         ITextInjector injector,
-        DictationOptions? options = null)
+        DictationOptions? options = null,
+        ITextExpander? expander = null)
     {
         _audio = audio;
         _engine = engine;
         _parser = parser;
         _persian = persian;
         _injector = injector;
+        _expander = expander;
         _options = options ?? new DictationOptions();
     }
 
@@ -104,6 +107,11 @@ public sealed class DictationOrchestrator : IAsyncDisposable
                 else if (part.Text is { } text)
                 {
                     var clean = _persian.Process(text, _options.PersianText);
+                    if (_expander is not null)
+                    {
+                        clean = _expander.Expand(clean);
+                    }
+
                     await _injector.TypeAsync(clean);
                     finalText.Append(clean);
                 }

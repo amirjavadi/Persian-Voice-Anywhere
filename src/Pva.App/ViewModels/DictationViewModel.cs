@@ -21,6 +21,7 @@ public partial class DictationViewModel : ObservableObject
     private readonly IPersianTextProcessor _persian;
     private readonly ITextInjector _injector;
     private readonly IHotkeyService _hotkeys;
+    private readonly ITextExpander _expander;
     private readonly Storage.AppSettings _settings;
 
     private DictationOrchestrator? _orchestrator;
@@ -43,6 +44,7 @@ public partial class DictationViewModel : ObservableObject
         IPersianTextProcessor persian,
         ITextInjector injector,
         IHotkeyService hotkeys,
+        ITextExpander expander,
         Storage.AppSettings settings)
     {
         _resolver = resolver;
@@ -51,6 +53,7 @@ public partial class DictationViewModel : ObservableObject
         _persian = persian;
         _injector = injector;
         _hotkeys = hotkeys;
+        _expander = expander;
         _settings = settings;
 
         _hotkeys.Triggered += OnHotkey;
@@ -140,7 +143,7 @@ public partial class DictationViewModel : ObservableObject
             Commands = new CommandOptions { CommandModeEnabled = _settings.CommandModeEnabled },
         };
 
-        var orchestrator = new DictationOrchestrator(_audio, engine, _parser, _persian, _injector, options);
+        var orchestrator = new DictationOrchestrator(_audio, engine, _parser, _persian, _injector, options, _expander);
         orchestrator.StateChanged += (_, state) => OnUi(() => StateText = DictationStateText.ToPersian(state));
         orchestrator.TranscriptionProduced += (_, text) => OnUi(() => AddTranscription(text));
         _orchestrator = orchestrator;

@@ -62,6 +62,7 @@ flowchart TD
 | `Pva.Stt`        | `ISpeechToTextEngine`، `WhisperCppEngine`، `FasterWhisperEngine`، انتخاب/fallback موتور | Core |
 | `Pva.PersianText`| `IPersianTextProcessor` خالص و قطعی + دیکشنری‌ها             | Core      |
 | `Pva.Commands`   | `ICommandParser`، گرامر دستور صوتی                           | Core      |
+| `Pva.TextExpansion` | `ITextExpander`، میان‌بُر/ماکرو (`/phone`، «امضا»)، خالص     | Core      |
 | `Pva.Injection`  | `ITextInjector` با SendInput                                 | Core      |
 | `Pva.Hotkeys`    | `IHotkeyService`، low-level keyboard hook / RegisterHotKey   | Core      |
 | `Pva.Storage`    | repositoryها (SQLite)، تنظیمات JSON، محافظت secret            | Core      |
