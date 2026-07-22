@@ -16,7 +16,7 @@
 | Milestone | عنوان | خروجی | وضعیت |
 |-----------|-------|-------|-------|
 | M0 | داربست و زیرساخت | solution، DI، logging، CI، تست نمونه | ✅ |
-| M1 | ضبط صدا + VAD | `Pva.Audio` با WASAPI و Silero VAD | ⬜ |
+| M1 | ضبط صدا + VAD | `Pva.Audio` با WASAPI و Silero VAD | ✅ |
 | M2 | موتور STT هیبرید | whisper.cpp کارکردی + adapter Faster Whisper | ⬜ |
 | M3 | پس‌پردازش فارسی | `Pva.PersianText` + تست‌های golden | ⬜ |
 | M4 | تزریق متن | `Pva.Injection` با SendInput در اپ واقعی | ⬜ |
@@ -41,10 +41,15 @@
 - **نتیجه‌ی تست:** Build حالت Release با ۰ warning/۰ error؛ ۴ تست پاس.
 - **دروازه:** ✅ انجام شد — منتظر تأیید مالک برای M1.
 
-### M1 — ضبط صدا + VAD ⬜
-- `IAudioCapture` با WASAPI (NAudio)، ۱۶kHz مونو.
-- VAD با Silero (ONNX Runtime)؛ رویداد `SegmentReady`.
-- **تست:** unit روی قطعه‌بندی با فایل صوتی نمونه؛ سنجش Idle CPU.
+### M1 — ضبط صدا + VAD ✅
+- ✅ `WasapiAudioCapture : IAudioCapture` با WASAPI (NAudio)، downmix→mono، resample→16kHz.
+- ✅ `SpeechSegmenter` (ماشین حالت خالص: آستانه + hangover + min-speech + pre-roll).
+- ✅ `AudioResampler` (خطی، استریمی، خالص).
+- ✅ `SileroVoiceActivityDetector` (Silero v5 via ONNX Runtime).
+- ✅ `AddAudioCapture` (DI؛ ساخت lazy مدل تا نبودِ فایل، اجرا را نشکند).
+- ✅ **تست:** ۱۱ unit جدید (۶ segmenter + ۵ resampler)؛ کل ۱۵/۱۵ سبز، build Release ۰/۰.
+- **تأیید دستی باقی‌مانده:** ضبط زنده‌ی میکروفون + مدل Silero (نیاز به `models/silero_vad.onnx`
+  و دستگاه صوتی) — در اجرای واقعی بررسی می‌شود. راهنما: `docs/models.md`.
 
 ### M2 — موتور STT هیبرید ⬜
 - `ISpeechToTextEngine` + `WhisperCppEngine` (Whisper.net) کارکردی روی CPU.

@@ -63,10 +63,26 @@
 - ثبت در repo: `docs/design-language.md`، `docs/prototypes/liquid-glass.html`،
   ADR-0012، ریسک جدید R11 (تضاد افکت با کارایی)، به‌روزرسانی roadmap M7 و README و حافظه.
 
+## سشن ۴ — 2026-07-22 — M1 (ضبط صدا + VAD) ✅
+
+**انجام‌شده در `Pva.Audio`:**
+- `AudioCaptureOptions`، `IVoiceActivityDetector`.
+- `SpeechSegmenter` — ماشین حالت خالص و قطعی (آستانه + hangover + min-speech + pre-roll).
+- `AudioResampler` — نمونه‌بردار خطی استریمی خالص (deviceRate→16kHz).
+- `SileroVoiceActivityDetector` — Silero v5 via ONNX Runtime (نیاز به `models/silero_vad.onnx`).
+- `WasapiAudioCapture : IAudioCapture` — WASAPI (NAudio)، downmix، resample، فریم→VAD→
+  segmenter→`SegmentReady`، روی نخ پس‌زمینه.
+- `AddAudioCapture` — DI با ساخت lazy مدل.
+- پکیج‌ها: NAudio 2.3، Microsoft.ML.OnnxRuntime 1.27، DI.Abstractions. `Pva.Tests`→net10.0-windows.
+- `docs/models.md` اضافه شد.
+
+**نتیجه:** build Release ۰/۰؛ **۱۵/۱۵ تست سبز** (۱۱ تست جدید: segmenter + resampler).
+تأیید دستیِ ضبط زنده + مدل Silero باقی مانده (نیاز به میکروفون و فایل مدل).
+
 ## قدم بعدی
 
-1. **دریافت تأیید مالک برای شروع M1** (ضبط صدا + VAD در `Pva.Audio`). طبق پروتکل،
-   بدون تأیید وارد milestone بعد نمی‌شویم. زبان طراحی در M7 پیاده می‌شود.
+1. **دریافت تأیید مالک برای شروع M2** (موتور STT هیبرید: whisper.cpp + Faster Whisper).
+   طبق پروتکل، بدون تأیید وارد milestone بعد نمی‌شویم. زبان طراحی در M7 پیاده می‌شود.
 
 ## نکات باز / بلاکرها
 
