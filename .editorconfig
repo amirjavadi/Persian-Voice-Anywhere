@@ -16,6 +16,10 @@ dotnet_style_qualification_for_field = false:warning
 dotnet_style_require_accessibility_modifiers = for_non_interface_members:warning
 csharp_style_var_when_type_is_apparent = true:suggestion
 dotnet_diagnostic.CA2007.severity = none   # ConfigureAwait not required in app code
+# LoggerMessage-delegate perf rules: micro-optimizations for hot logging paths.
+# Our logging is low-frequency (engine resolve, lifecycle); plain ILogger calls are clearer.
+dotnet_diagnostic.CA1848.severity = none
+dotnet_diagnostic.CA1873.severity = none
 dotnet_style_namespace_match_folder = true:warning
 csharp_style_namespace_declarations = file_scoped:warning
 

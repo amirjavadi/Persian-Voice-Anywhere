@@ -17,7 +17,7 @@
 |-----------|-------|-------|-------|
 | M0 | داربست و زیرساخت | solution، DI، logging، CI، تست نمونه | ✅ |
 | M1 | ضبط صدا + VAD | `Pva.Audio` با WASAPI و Silero VAD | ✅ |
-| M2 | موتور STT هیبرید | whisper.cpp کارکردی + adapter Faster Whisper | ⬜ |
+| M2 | موتور STT هیبرید | whisper.cpp کارکردی + adapter Faster Whisper | ✅ |
 | M3 | پس‌پردازش فارسی | `Pva.PersianText` + تست‌های golden | ⬜ |
 | M4 | تزریق متن | `Pva.Injection` با SendInput در اپ واقعی | ⬜ |
 | M5 | Hotkey + orchestrator | pipeline کامل صحبت→تایپ (اولین دموی واقعی) | ⬜ |
@@ -51,11 +51,15 @@
 - **تأیید دستی باقی‌مانده:** ضبط زنده‌ی میکروفون + مدل Silero (نیاز به `models/silero_vad.onnx`
   و دستگاه صوتی) — در اجرای واقعی بررسی می‌شود. راهنما: `docs/models.md`.
 
-### M2 — موتور STT هیبرید ⬜
-- `ISpeechToTextEngine` + `WhisperCppEngine` (Whisper.net) کارکردی روی CPU.
-- `FasterWhisperEngine` (sidecar پایتون + IPC) پشت همان اینترفیس؛ fallback خودکار.
-- lazy-load مدل؛ استفاده از GPU در صورت وجود.
-- **تست:** رونویسی فایل نمونه‌ی فارسی؛ تست انتخاب/fallback موتور (mock).
+### M2 — موتور STT هیبرید ✅
+- ✅ `WhisperCppEngine` (Whisper.net) روی CPU — پیش‌فرض پرتابل.
+- ✅ `FasterWhisperEngine` (sidecar پایتون + IPC خط JSON، WAV موقت) پشت همان اینترفیس.
+- ✅ `HybridSpeechEngineResolver` — ترجیح + fallback خودکار به whisper.cpp (حتی اگر
+  engine pack نصب نباشد یا سازنده استثنا بدهد).
+- ✅ `ISidecarTransport` + `ProcessSidecarTransport`؛ `WavWriter`؛ `AddSpeechToText` (DI، lazy).
+- ✅ **تست:** ۶ تست انتخاب/fallback با موتور جعلی؛ کل ۲۱/۲۱ سبز، build Release ۰/۰.
+- **تأیید دستی باقی‌مانده:** رونویسی واقعی نیاز به مدل ggml (whisper.cpp) و برای Faster
+  Whisper به python + مدل CTranslate2 دارد. راهنما: `docs/models.md`.
 
 ### M3 — پس‌پردازش فارسی ⬜
 - `IPersianTextProcessor`: normalization، نیم‌فاصله، علائم، اعداد، ترکیب fa/en،

@@ -79,9 +79,23 @@
 **نتیجه:** build Release ۰/۰؛ **۱۵/۱۵ تست سبز** (۱۱ تست جدید: segmenter + resampler).
 تأیید دستیِ ضبط زنده + مدل Silero باقی مانده (نیاز به میکروفون و فایل مدل).
 
+## سشن ۵ — 2026-07-22 — M2 (موتور STT هیبرید) ✅
+
+**انجام‌شده در `Pva.Stt`:**
+- `WhisperCppEngine` (Whisper.net) — پیش‌فرض CPU پرتابل.
+- `FasterWhisperEngine` — کلاینت sidecar پایتون (پروتکل خط JSON، WAV موقت via `WavWriter`).
+- `ISidecarTransport` + `ProcessSidecarTransport` (اجرای پروسه، stdin/stdout).
+- `HybridSpeechEngineResolver` + `SttCandidate` — ترجیح + fallback خودکار (شامل خطای ساخت).
+- `SttEngineOptions`، `AddSpeechToText` (DI، ساخت lazy).
+- پکیج‌ها: Whisper.net 1.9 + Runtime، Logging/DI Abstractions.
+- editorconfig: CA1848/CA1873 (الزام LoggerMessage) خاموش؛ CA1859 با نوع concrete رفع شد.
+
+**نتیجه:** build Release ۰/۰؛ **۲۱/۲۱ تست سبز** (۶ تست جدید انتخاب/fallback موتور).
+تأیید دستیِ رونویسی واقعی باقی مانده (نیاز به مدل ggml و برای FasterWhisper به python).
+
 ## قدم بعدی
 
-1. **دریافت تأیید مالک برای شروع M2** (موتور STT هیبرید: whisper.cpp + Faster Whisper).
+1. **دریافت تأیید مالک برای شروع M3** (پس‌پردازش فارسی: `Pva.PersianText` + تست‌های golden).
    طبق پروتکل، بدون تأیید وارد milestone بعد نمی‌شویم. زبان طراحی در M7 پیاده می‌شود.
 
 ## نکات باز / بلاکرها

@@ -23,6 +23,7 @@
     <ProjectReference Include="..\..\src\Pva.PersianText\Pva.PersianText.csproj" />
     <ProjectReference Include="..\..\src\Pva.Commands\Pva.Commands.csproj" />
     <ProjectReference Include="..\..\src\Pva.Audio\Pva.Audio.csproj" />
+    <ProjectReference Include="..\..\src\Pva.Stt\Pva.Stt.csproj" />
   </ItemGroup>
 
 </Project>
