@@ -19,7 +19,7 @@
 | M1 | ضبط صدا + VAD | `Pva.Audio` با WASAPI و Silero VAD | ✅ |
 | M2 | موتور STT هیبرید | whisper.cpp کارکردی + adapter Faster Whisper | ✅ |
 | M3 | پس‌پردازش فارسی | `Pva.PersianText` + تست‌های golden | ✅ |
-| M4 | تزریق متن | `Pva.Injection` با SendInput در اپ واقعی | ⬜ |
+| M4 | تزریق متن | `Pva.Injection` با SendInput در اپ واقعی | ✅ |
 | M5 | Hotkey + orchestrator | pipeline کامل صحبت→تایپ (اولین دموی واقعی) | ⬜ |
 | M6 | دستورات صوتی | «خط بعد»، «ویرگول»… به‌صورت کنش | ⬜ |
 | M7 | UI: Tray + میکروفون شناور + تنظیمات | تجربه‌ی کاربری کامل هسته | ⬜ |
