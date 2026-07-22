@@ -13,7 +13,8 @@
 ![UI](https://img.shields.io/badge/UI-WPF%20%2B%20Fluent-2D7D9A)
 ![Whisper](https://img.shields.io/badge/STT-Whisper%20(offline)-00A67E)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
-![Status](https://img.shields.io/badge/Status-Foundation%20Ready-orange)
+![Status](https://img.shields.io/badge/Status-v1%20core%20wired-brightgreen)
+![Tests](https://img.shields.io/badge/tests-90%20passing-brightgreen)
 ![PRs](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 
 <br/>

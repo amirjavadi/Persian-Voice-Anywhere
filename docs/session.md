@@ -116,10 +116,31 @@
   `NativeMethods` (LibraryImport)، `AddTextInjection` (DI). ۸ تست جدید؛ کل ۵۳/۵۳ سبز.
   محدودیت UIPI مستند (ریسک R3). تأیید دستیِ تایپ در اپ واقعی باقی مانده.
 
-## قدم بعدی
+**اجرای پیوسته‌ی M5..M10 (همین سشن):**
+- **M5 ✅** Hotkeys + `DictationOrchestrator` (اتصال کامل pipeline). ۶۵/۶۵.
+- **M6 ✅** `VoiceCommandParser` (دستورهای صوتی). ۷۴/۷۴.
+- **M7 🟨** UI هسته: tray + میکروفون شناور + تنظیمات + سیم‌کشی کامل DI. ۸۱/۸۱.
+  (پولیش بصری Liquid Glass/Mica/انیمیشن باقی مانده.)
+- **M8 ✅** نوت‌پد تب‌دار + session-restore. ۸۶/۸۶.
+- **M9 ✅** Sticky Notes. ۹۰/۹۰.
+- **M10 🟨** نسخه‌گذاری + `build/publish-portable.ps1` + `THIRD-PARTY-NOTICES.md`.
+  (سنجش perf، امضای کد، آیکون، مدل‌ها برای انتشار نهایی لازم است.)
 
-ادامه‌ی M5 (Hotkeys + DictationOrchestrator) → M6 → … → M10 به‌صورت پیوسته.
-زبان طراحی در M7 پیاده می‌شود.
+## وضعیت نهایی v1
+
+هسته‌ی محصول به‌صورت end-to-end سیم‌کشی شده و کل solution با ۹۰ تست سبز build می‌شود
+(Release، ۰ warning). آنچه برای **اجرای واقعی** لازم است (تأیید دستی):
+- قرار دادن مدل‌ها در `models/` (`silero_vad.onnx`، `ggml-base.bin` — `docs/models.md`).
+- اجرای برنامه روی ویندوز و تست ضبط زنده → تایپ در اپ‌های واقعی.
+- سنجش perf و امضای کد پیش از انتشار عمومی.
+
+## قدم‌های بعدی (پیشنهادی)
+
+1. تأمین مدل‌ها و اجرای دستی end-to-end؛ رفع مشکلات احتمالی interop (WASAPI/Silero/SendInput/hook).
+2. پولیش بصری M7 (WPF-UI Mica + انیمیشن‌های spring + آیکون‌های وکتور).
+3. ارتقای نوت‌پد به AvalonEdit؛ مهاجرت persistence به SQLite.
+4. سنجش perf + امضای کد + آیکون اپ؛ سپس انتشار v1.
+5. شروع backlog (OCR، Clipboard History، Voice Macro، بازنویسی هوشمند…).
 
 ## نکات باز / بلاکرها
 

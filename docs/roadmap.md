@@ -2,8 +2,9 @@
 
 # نقشه‌ی راه — Persian Voice Anywhere
 
-کار به Milestoneهای کوچک و قابل‌تحویل شکسته شده است. **هر Milestone پس از اتمام
-تست می‌شود و بدون تأیید مالک، وارد Milestone بعد نمی‌شویم** (طبق `CLAUDE.md` §۵).
+کار به Milestoneهای کوچک و قابل‌تحویل شکسته شده است. هر Milestone پس از اتمام تست و
+commit می‌شود. **توجه:** مالک در 2026-07-22 دروازه‌ی تأیید هر milestone را برای
+build-out کامل M4–M10 برداشت («تا آخر برو»)؛ بنابراین این مراحل پیوسته اجرا شدند.
 
 وضعیت‌ها: ⬜ شروع‌نشده · 🟨 در حال انجام · ✅ کامل
 
@@ -103,20 +104,25 @@
   Mica/Acrylic، انیمیشن‌های spring (تنفس/waveform)، آیکون‌های وکتور اختصاصی، تم Light/Dark
   پویا. تأیید بصری دستی. — طبق `docs/design-language.md` و پروتوتایپ.
 
-### M8 — نوت‌پد داخلی ⬜
-- ویرایشگر تب‌دار (AvalonEdit): جستجو/جایگزینی، Word Wrap، RTL، Undo/Redo،
-  Session Restore، Dark/Light، ذخیره‌ی خودکار، Drag & Drop.
-- **تست:** تست ذخیره/بازیابی session و repositoryها.
+### M8 — نوت‌پد داخلی ✅
+- ✅ `NotepadSessionStore` (JSON) + مدل‌ها؛ `NotepadViewModel` (تب، باز/ذخیره/ذخیره‌به‌نام،
+  بازیابی session + autosave)؛ `NotepadWindow` (تب‌دار، RTL، Word Wrap، Unicode، Undo داخلی).
+- ✅ `AddNotepad` (DI)؛ اتصال به tray. ۵ تست؛ کل ۸۶/۸۶ سبز.
+- **ارتقای بعدی:** AvalonEdit (خط‌شماره، syntax، Markdown، جستجو/جایگزینی پیشرفته).
 
-### M9 — Sticky Notes ⬜
-- یادداشت‌های کوچک topmost و pin‌شونده روی دسکتاپ؛ Markdown؛ ذخیره‌ی خودکار (SQLite).
-- **تست:** persistence و رفتار pin.
+### M9 — Sticky Notes ✅
+- ✅ `StickyNotesStore` (JSON) + `StickyNotesService` (add/remove/save/load)؛
+  `StickyNoteWindow` (بدون‌قاب، draggable، pin، حذف)؛ `StickyNotesManager` (چرخه‌ی پنجره‌ها
+  + بازیابی). `AddStickyNotes` (DI)؛ اتصال به tray و startup. ۴ تست؛ کل ۹۰/۹۰ سبز.
+- **ارتقای بعدی:** رندر Markdown؛ مهاجرت persistence به SQLite (طبق architecture).
 
-### M10 — بسته‌بندی و سخت‌سازی ⬜
-- انتشار ZIP پرتابل + EXE تک‌فایل؛ تنظیمات کنار exe.
-- perf (شروع < ۲ ثانیه، Idle CPU < ۲٪، RAM)، تست نشت حافظه، پایداری اجرای طولانی.
-- امضای کد (در صورت فراهم‌بودن گواهی)، NOTICE کامپوننت‌ها.
-- **خروجی:** انتشار v1.
+### M10 — بسته‌بندی و سخت‌سازی 🟨
+- ✅ نسخه‌گذاری (`Version=0.1.0`)؛ `build/publish-portable.ps1` (Release، self-contained،
+  single-file → `publish/portable` + ZIP)؛ `THIRD-PARTY-NOTICES.md` (مجوز کامپوننت‌ها).
+- ✅ تنظیمات و لاگ و مدل‌ها کنار exe (پرتابل، بدون رجیستری).
+- **باقی‌مانده (نیاز به محیط/گواهی):** سنجش perf واقعی (شروع < ۲s، Idle CPU < ۲٪، RAM)،
+  تست نشت حافظه، امضای کد (Code Signing)، آیکون اپ. MSIX + auto-update در backlog.
+- **خروجی:** اسکلت انتشار v1 آماده؛ برای انتشار نهایی، مدل‌ها + امضا + سنجش perf لازم است.
 
 ---
 

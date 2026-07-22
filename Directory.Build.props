@@ -9,6 +9,7 @@
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <Product>Persian Voice Anywhere</Product>
+    <Version>0.1.0</Version>
     <Authors>Amir Javadi</Authors>
     <Company>Persian Voice Anywhere</Company>
     <RepositoryUrl>https://github.com/amirjavadi/Persian-Voice-Anywhere</RepositoryUrl>
