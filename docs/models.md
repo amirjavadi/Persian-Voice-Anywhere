@@ -6,6 +6,20 @@
 جداگانه توزیع و در پوشه‌ی `models/` کنار فایل اجرایی قرار می‌گیرند. این سند می‌گوید
 چه فایل‌هایی لازم است و از کجا.
 
+## دانلود خودکار (پیشنهادی)
+
+```powershell
+pwsh ./build/fetch-models.ps1                     # base (پیش‌فرض)
+pwsh ./build/fetch-models.ps1 -WhisperModel small # مدل بزرگ‌تر، دقیق‌تر
+```
+
+اسکریپت، `silero_vad.onnx` و `ggml-<size>.bin` را در `models/` می‌گذارد. اگر
+GitHub/HuggingFace فیلتر است، ابتدا `$env:HTTPS_PROXY` را تنظیم کنید.
+
+- **نسخه‌ی پرتابل:** پوشه‌ی `models/` را کنار `Pva.App.exe` بگذارید.
+- **`dotnet run`:** مسیرها را در `settings.json` مطلق بدهید (`VadModelPath`،
+  `WhisperModelPath`).
+
 ## VAD — Silero (لازم برای M1)
 
 - فایل: `models/silero_vad.onnx`

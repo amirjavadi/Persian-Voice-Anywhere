@@ -17,6 +17,12 @@ public sealed record AppSettings
     /// <summary>"Auto" / "Cpu" / "Gpu".</summary>
     public string Device { get; init; } = "Auto";
 
+    /// <summary>مسیر مدل Silero VAD؛ null یعنی models/silero_vad.onnx کنار exe.</summary>
+    public string? VadModelPath { get; init; }
+
+    /// <summary>مسیر مدل ggml برای whisper.cpp؛ null یعنی models/ggml-base.bin کنار exe.</summary>
+    public string? WhisperModelPath { get; init; }
+
     /// <summary>"System" / "Light" / "Dark".</summary>
     public string Theme { get; init; } = "System";
 

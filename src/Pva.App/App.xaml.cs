@@ -94,8 +94,13 @@ public partial class App : Application
         services.AddVoiceCommands();
         services.AddTextInjection();
         services.AddHotkeys();
-        services.AddAudioCapture(new AudioCaptureOptions());
-        services.AddSpeechToText(new SttEngineOptions { Preferred = engineKind, Device = device });
+        services.AddAudioCapture(new AudioCaptureOptions { VadModelPath = settings.VadModelPath });
+        services.AddSpeechToText(new SttEngineOptions
+        {
+            Preferred = engineKind,
+            Device = device,
+            WhisperModelPath = settings.WhisperModelPath,
+        });
 
         services.AddNotepad();
         services.AddStickyNotes();
