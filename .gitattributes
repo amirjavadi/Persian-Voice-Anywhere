@@ -1,0 +1,21 @@
+# Normalize line endings: text files use LF in the repo, checked out native on Windows.
+* text=auto
+
+# Source and config always LF in the repo for consistent diffs.
+*.cs text eol=lf
+*.csproj text eol=lf
+*.props text eol=lf
+*.targets text eol=lf
+*.xaml text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+*.editorconfig text eol=lf
+
+# Binaries — never normalize.
+*.png binary
+*.ico binary
+*.bin binary
+*.gguf binary
+*.onnx binary
+*.dll binary
