@@ -20,6 +20,9 @@ dotnet_diagnostic.CA2007.severity = none   # ConfigureAwait not required in app 
 # Our logging is low-frequency (engine resolve, lifecycle); plain ILogger calls are clearer.
 dotnet_diagnostic.CA1848.severity = none
 dotnet_diagnostic.CA1873.severity = none
+# Some Win32 APIs take managed delegate callbacks (e.g. SetWindowsHookEx) that the
+# LibraryImport source generator does not support, so DllImport is used there.
+dotnet_diagnostic.SYSLIB1054.severity = none
 dotnet_style_namespace_match_folder = true:warning
 csharp_style_namespace_declarations = file_scoped:warning
 

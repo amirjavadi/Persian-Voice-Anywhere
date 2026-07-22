@@ -20,7 +20,7 @@
 | M2 | موتور STT هیبرید | whisper.cpp کارکردی + adapter Faster Whisper | ✅ |
 | M3 | پس‌پردازش فارسی | `Pva.PersianText` + تست‌های golden | ✅ |
 | M4 | تزریق متن | `Pva.Injection` با SendInput در اپ واقعی | ✅ |
-| M5 | Hotkey + orchestrator | pipeline کامل صحبت→تایپ (اولین دموی واقعی) | ⬜ |
+| M5 | Hotkey + orchestrator | pipeline کامل صحبت→تایپ (اولین دموی واقعی) | ✅ |
 | M6 | دستورات صوتی | «خط بعد»، «ویرگول»… به‌صورت کنش | ⬜ |
 | M7 | UI: Tray + میکروفون شناور + تنظیمات | تجربه‌ی کاربری کامل هسته | ⬜ |
 | M8 | نوت‌پد داخلی | ویرایشگر تب‌دار (AvalonEdit) | ⬜ |
@@ -70,17 +70,20 @@
 - ✅ `AddPersianText` (DI با دیکشنری اصطلاحات اختیاری). ماژول خالص و قطعی.
 - ✅ **تست:** ۲۴ تست golden شامل «امروز یک Pull Request روی GitHub زدم.»؛ کل ۴۵/۴۵ سبز، build Release ۰/۰.
 
-### M4 — تزریق متن ⬜
-- `ITextInjector` با SendInput (Unicode)؛ ارسال کنش‌ها (Enter/Backspace/Undo).
-- مدیریت surrogate و نرخ ارسال.
-- **تست:** تزریق در Notepad و یک اپ مرورگر؛ مستندسازی محدودیت UIPI.
+### M4 — تزریق متن ✅
+- ✅ `SendInputTextInjector : ITextInjector` با SendInput (Unicode، surrogate-safe).
+- ✅ `EditorActionMapper` (کنش→کلید مجازی، خالص و تست‌شده)؛ `NativeMethods` (LibraryImport).
+- ✅ `AddTextInjection` (DI). محدودیت UIPI مستند (R3).
+- ✅ **تست:** ۸ تست نگاشت کنش. تأیید دستیِ تایپ در اپ واقعی باقی مانده.
 
-### M5 — Hotkey + Orchestrator ⬜
-- `IHotkeyService` (low-level hook / RegisterHotKey): Push-to-Talk، Toggle،
-  Double-Ctrl، Caps Lock، دلخواه.
-- `DictationOrchestrator`: اتصال کامل ضبط→STT→دستور→فارسی→تزریق.
-- **خروجی:** اولین دموی واقعی صحبت→تایپ در اپ‌های واقعی.
-- **تست:** integration سرتاسری pipeline.
+### M5 — Hotkey + Orchestrator ✅
+- ✅ `HotkeyGesture.Parse` (خالص و تست‌شده)؛ `LowLevelKeyboardHook` (WH_KEYBOARD_LL،
+  نخ اختصاصی + message loop)؛ `GlobalHotkeyService : IHotkeyService` (Push-to-Talk،
+  Toggle، Combo، Single-Key، Double-Ctrl)؛ `AddHotkeys` (DI).
+- ✅ `DictationOrchestrator` (در Core): اتصال کامل ضبط→STT→دستور→فارسی→تزریق، وضعیت
+  و رویدادها، پردازش سریالی قطعه‌ها.
+- ✅ **تست:** ۸ تست gesture + ۴ تست orchestrator (با fake + پس‌پردازش فارسی واقعی)؛
+  کل ۶۵/۶۵ سبز. تأیید دستیِ hook زنده باقی مانده.
 
 ### M6 — دستورات صوتی ⬜
 - `ICommandParser`: عبارات رزرو → کنش؛ حالت دستور/دیکته با toggle (ریسک R6).
