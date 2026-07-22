@@ -26,6 +26,7 @@
     <ProjectReference Include="..\..\src\Pva.Stt\Pva.Stt.csproj" />
     <ProjectReference Include="..\..\src\Pva.Injection\Pva.Injection.csproj" />
     <ProjectReference Include="..\..\src\Pva.Hotkeys\Pva.Hotkeys.csproj" />
+    <ProjectReference Include="..\..\src\Pva.Storage\Pva.Storage.csproj" />
   </ItemGroup>
 
 </Project>

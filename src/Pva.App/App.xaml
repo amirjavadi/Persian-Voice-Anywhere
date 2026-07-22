@@ -1,8 +1,9 @@
 ﻿<Application x:Class="Pva.App.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Pva.App">
-    <!-- No StartupUri: the generic host owns startup (see App.xaml.cs). -->
+             xmlns:local="clr-namespace:Pva.App"
+             ShutdownMode="OnExplicitShutdown">
+    <!-- No StartupUri: the generic host owns startup; app lives in the tray. -->
     <Application.Resources>
 
     </Application.Resources>

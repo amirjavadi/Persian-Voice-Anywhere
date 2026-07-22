@@ -22,7 +22,7 @@
 | M4 | تزریق متن | `Pva.Injection` با SendInput در اپ واقعی | ✅ |
 | M5 | Hotkey + orchestrator | pipeline کامل صحبت→تایپ (اولین دموی واقعی) | ✅ |
 | M6 | دستورات صوتی | «خط بعد»، «ویرگول»… به‌صورت کنش | ✅ |
-| M7 | UI: Tray + میکروفون شناور + تنظیمات | تجربه‌ی کاربری کامل هسته | ⬜ |
+| M7 | UI: Tray + میکروفون شناور + تنظیمات | تجربه‌ی کاربری کامل هسته | 🟨 |
 | M8 | نوت‌پد داخلی | ویرایشگر تب‌دار (AvalonEdit) | ⬜ |
 | M9 | Sticky Notes | یادداشت‌های پین‌شونده | ⬜ |
 | M10 | بسته‌بندی پرتابل + سخت‌سازی | ZIP/EXE، perf، پایداری، انتشار v1 | ⬜ |
@@ -91,13 +91,17 @@
   درون متن درج می‌شوند؛ `CommandModeEnabled` برای خاموش‌کردن تفسیر (R6). `AddVoiceCommands` (DI).
 - ✅ **تست:** ۹ تست (چندکلمه‌ای، علائم، پرانتز تمیز، حالت خاموش، نرمال‌سازی عربی)؛ کل ۷۴/۷۴ سبز.
 
-### M7 — UI هسته ⬜
-- پیاده‌سازی زبان طراحی **Liquid Glass** (`docs/design-language.md`, ADR-0012):
-  WPF-UI + Mica/Acrylic، سطوح شیشه، آیکون‌های شیشه‌ای اختصاصی، حرکت spring.
-- System Tray + منوی سریع؛ میکروفون شناور (topmost، draggable، شفافیت، مخفی‌شونده)؛
-  پنجره‌ی تنظیمات (Dark/Light، High-DPI).
-- **گاردریل کارایی:** انیمیشن فقط هنگام فعال، احترام به reduced-motion، تنزل graceful.
-- **تست:** تست ViewModelها؛ QA بصری با `/design-review`؛ سنجش Idle CPU با افکت‌ها فعال.
+### M7 — UI هسته 🟨 (کارکرد کامل؛ پولیش بصری باقی)
+- ✅ `DictationViewModel` (چرخه‌ی حیات + کلید میانبر + وضعیت + تاریخچه، resolve موتور lazy).
+- ✅ `SettingsViewModel` + پنجره‌ی تنظیمات (کلید میانبر، موتور، GPU، اصلاح فارسی، شفافیت).
+- ✅ `FloatingMicWindow` — بدون‌قاب، Topmost، draggable، شفافیت، سطح شیشه‌ی مونوکروم.
+- ✅ System Tray (Hardcodet) با منوی شروع/توقف/نمایش/تنظیمات/خروج؛ `ShutdownMode=OnExplicitShutdown`.
+- ✅ `App.xaml.cs` کل خط‌لوله را در DI می‌بندد (Settings/Persian/Commands/Injection/Hotkeys/
+  Audio/Stt + orchestrator). `DictationStateText` (خالص، تست‌شده).
+- ✅ **تست:** ۳ تست settings round-trip + ۴ تست state-text؛ کل ۸۱/۸۱ سبز، build Release ۰/۰.
+- **باقی‌مانده (پولیش بصری، بعد از سیم‌کشی هسته):** جایگزینی گلَس دست‌ساز با WPF-UI
+  Mica/Acrylic، انیمیشن‌های spring (تنفس/waveform)، آیکون‌های وکتور اختصاصی، تم Light/Dark
+  پویا. تأیید بصری دستی. — طبق `docs/design-language.md` و پروتوتایپ.
 
 ### M8 — نوت‌پد داخلی ⬜
 - ویرایشگر تب‌دار (AvalonEdit): جستجو/جایگزینی، Word Wrap، RTL، Undo/Redo،
