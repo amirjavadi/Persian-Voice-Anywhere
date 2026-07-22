@@ -18,7 +18,7 @@
 | M0 | داربست و زیرساخت | solution، DI، logging، CI، تست نمونه | ✅ |
 | M1 | ضبط صدا + VAD | `Pva.Audio` با WASAPI و Silero VAD | ✅ |
 | M2 | موتور STT هیبرید | whisper.cpp کارکردی + adapter Faster Whisper | ✅ |
-| M3 | پس‌پردازش فارسی | `Pva.PersianText` + تست‌های golden | ⬜ |
+| M3 | پس‌پردازش فارسی | `Pva.PersianText` + تست‌های golden | ✅ |
 | M4 | تزریق متن | `Pva.Injection` با SendInput در اپ واقعی | ⬜ |
 | M5 | Hotkey + orchestrator | pipeline کامل صحبت→تایپ (اولین دموی واقعی) | ⬜ |
 | M6 | دستورات صوتی | «خط بعد»، «ویرگول»… به‌صورت کنش | ⬜ |
@@ -61,11 +61,14 @@
 - **تأیید دستی باقی‌مانده:** رونویسی واقعی نیاز به مدل ggml (whisper.cpp) و برای Faster
   Whisper به python + مدل CTranslate2 دارد. راهنما: `docs/models.md`.
 
-### M3 — پس‌پردازش فارسی ⬜
-- `IPersianTextProcessor`: normalization، نیم‌فاصله، علائم، اعداد، ترکیب fa/en،
-  اصطلاحات محافظت‌شده.
-- `initial_prompt` فارسی+فنی.
-- **تست:** مجموعه‌ی golden شامل «امروز یک Pull Request روی GitHub زدم.»
+### M3 — پس‌پردازش فارسی ✅
+- ✅ `PersianTextProcessor : IPersianTextProcessor` — pipeline قوانین: نرمال‌سازی فاصله/حروف
+  (ي/ك/ة→ی/ک/ه، حذف حرکات/تطویل)، جایگزینی اصطلاحات، **نیم‌فاصله (می/نمی، ها/های، تر/ترین)**،
+  علائم نگارشی (تبدیل لاتین→فارسی + فاصله‌گذاری)، ارقام فارسی (با حفظ توکن‌های لاتین)،
+  جمع‌بندی فاصله.
+- ✅ `PersianInitialPrompt.Default` (پرامپت فارسی+فنی برای Whisper).
+- ✅ `AddPersianText` (DI با دیکشنری اصطلاحات اختیاری). ماژول خالص و قطعی.
+- ✅ **تست:** ۲۴ تست golden شامل «امروز یک Pull Request روی GitHub زدم.»؛ کل ۴۵/۴۵ سبز، build Release ۰/۰.
 
 ### M4 — تزریق متن ⬜
 - `ITextInjector` با SendInput (Unicode)؛ ارسال کنش‌ها (Enter/Backspace/Undo).
