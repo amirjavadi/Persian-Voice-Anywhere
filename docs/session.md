@@ -126,28 +126,44 @@
 - **M10 🟨** نسخه‌گذاری + `build/publish-portable.ps1` + `THIRD-PARTY-NOTICES.md`.
   (سنجش perf، امضای کد، آیکون، مدل‌ها برای انتشار نهایی لازم است.)
 
-## وضعیت نهایی v1
+## سشن ۷ (ادامه) — قابلیت‌های backlog + پولیش + بستن سشن
 
-هسته‌ی محصول به‌صورت end-to-end سیم‌کشی شده و کل solution با ۹۰ تست سبز build می‌شود
-(Release، ۰ warning). آنچه برای **اجرای واقعی** لازم است (تأیید دستی):
-- قرار دادن مدل‌ها در `models/` (`silero_vad.onnx`، `ggml-base.bin` — `docs/models.md`).
-- اجرای برنامه روی ویندوز و تست ضبط زنده → تایپ در اپ‌های واقعی.
-- سنجش perf و امضای کد پیش از انتشار عمومی.
+- **پولیش M7:** میکروفون شناور با آیکون وکتور + انیمیشن تنفس نور و halo (Storyboard،
+  با احترام به reduced-motion).
+- **آماده‌سازی اجرای واقعی:** `build/fetch-models.ps1` (دانلود Silero + Whisper)؛
+  `VadModelPath`/`WhisperModelPath` در تنظیمات.
+- **مستندات:** `docs/developer-guide.md` و `docs/user-manual.md` (فارسی) اضافه شد.
+- **backlog — Text Expansion + Voice Macro** (`Pva.TextExpansion`): `/phone`، «امضا»…،
+  در خط‌لوله ادغام شد (درز `ITextExpander` در Core). ۷ تست.
+- **backlog — Clipboard History** (`Pva.Clipboard`): سرویس خالص (حذف تکراری/سقف/pin/جستجو)
+  + مانیتور Win32 + پنجره. ۸ تست.
 
-## قدم‌های بعدی (پیشنهادی)
+## 🔚 وضعیت پایانِ سشن (2026-07-22)
 
-1. تأمین مدل‌ها و اجرای دستی end-to-end؛ رفع مشکلات احتمالی interop (WASAPI/Silero/SendInput/hook).
-2. پولیش بصری M7 (WPF-UI Mica + انیمیشن‌های spring + آیکون‌های وکتور).
-3. ارتقای نوت‌پد به AvalonEdit؛ مهاجرت persistence به SQLite.
-4. سنجش perf + امضای کد + آیکون اپ؛ سپس انتشار v1.
-5. شروع backlog (OCR، Clipboard History، Voice Macro، بازنویسی هوشمند…).
+- **۱۵ پروژه · ۱۰۵ تست سبز · Release ۰ warning/۰ error · درخت git تمیز · همه push‌شده.**
+- مخزن: https://github.com/amirjavadi/Persian-Voice-Anywhere
+- هسته‌ی v1 (M0–M9) کامل، M7/M10 با موارد پولیش/سخت‌سازی باز، به‌علاوه ۲ قابلیت backlog.
+- **EXE پرتابلِ self-contained با موفقیت تولید شد** (`build/publish-portable.ps1`).
 
-## نکات باز / بلاکرها
+### کارهای باقی‌مانده (به‌ترتیب اولویت)
+1. **اجرای واقعی end-to-end** روی ویندوز: `pwsh ./build/fetch-models.ps1` سپس
+   `dotnet run --project src/Pva.App`؛ تست ضبط زنده → تایپ؛ رفع مشکلات interop.
+2. **پولیش بصری M7:** WPF-UI Mica/Acrylic، waveform واکنش‌گر، آیکون‌های وکتور کامل.
+3. ارتقای نوت‌پد به **AvalonEdit**؛ مهاجرت persistence یادداشت‌ها به **SQLite**.
+4. **سنجش perf** (شروع < ۲s، Idle CPU < ۲٪، RAM)، **امضای کد**، آیکون اپ؛ سپس انتشار v1.
+5. ادامه‌ی backlog: بازنویسی قاعده‌محور فارسی، OCR، آرشیو ضبط صدا.
 
-- **نام کپی‌رایت:** روی «Amir Javadi» (بر اساس اکانت `amirjavadi`) تنظیم شد؛ در صورت
-  نیاز اصلاح شود.
-- **اجرای GUI:** صحت اسکلت با build تأیید شد؛ اجرای واقعی پنجره‌ی `Pva.App` روی دسکتاپ
-  به‌صورت دستی قابل بررسی است (`dotnet run --project src/Pva.App`).
-- **مدل‌های Whisper:** جدا از مخزن توزیع می‌شوند؛ استراتژی دانلود در اولین اجرا در M2.
+### بلاکرها (خارج از کد — نیازِ محیط/تصمیم کاربر)
+- **اجرای زنده و تأیید interopها** (WASAPI، Silero ONNX، Whisper، SendInput، keyboard hook،
+  clipboard monitor) فقط با اجرا روی **ویندوز + فایل‌های مدل** ممکن است — headless قابل تأیید نیست.
+- **امضای کد** نیازِ گواهی (Certificate) دارد.
+- **پولیش Mica** نیازِ دیدن رندر روی ویندوز ۱۱ برای tune دارد.
+
+### نکاتِ ازسرگیری
+- Build/Test: `dotnet build -c Release` · `dotnet test`. لاگ زمان‌اجرا: `logs/pva-*.log` کنار exe.
+- تنظیمات/داده کنار exe: `settings.json`، `notepad-session.json`، `sticky-notes.json`،
+  `clipboard-history.json`، `text-expansions.json`.
+- **نام کپی‌رایت** روی «Amir Javadi» (اکانت `amirjavadi`)؛ در صورت نیاز اصلاح شود.
+- سشنِ جدید از همین فایل و از حافظه‌ی پروژه ([[project-overview]]) شروع کند.
 
 </div>
