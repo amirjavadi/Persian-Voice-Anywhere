@@ -35,6 +35,10 @@ public partial class DictationViewModel : ObservableObject
     [ObservableProperty]
     private string? _lastError;
 
+    /// <summary>آخرین متن رونویسی‌شده؛ برای پیش‌نمایش زیر میکروفون شناور.</summary>
+    [ObservableProperty]
+    private string? _lastTranscription;
+
     public ObservableCollection<string> RecentTranscriptions { get; } = new();
 
     public DictationViewModel(
@@ -68,13 +72,25 @@ public partial class DictationViewModel : ObservableObject
     [RelayCommand]
     private async Task ToggleAsync()
     {
-        if (IsListening)
+        try
         {
-            await StopAsync();
+            if (IsListening)
+            {
+                await StopAsync();
+            }
+            else
+            {
+                await StartAsync();
+            }
         }
-        else
+        catch (Exception ex)
         {
-            await StartAsync();
+            // نبودِ مدل یا خطای دستگاه صدا نباید برنامه را بشکند؛ به کاربر گزارش می‌شود.
+            OnUi(() =>
+            {
+                IsListening = false;
+                LastError = ex.Message;
+            });
         }
     }
 
@@ -105,7 +121,11 @@ public partial class DictationViewModel : ObservableObject
     {
         await EnsureOrchestratorAsync();
         await _orchestrator!.StartAsync();
-        OnUi(() => IsListening = true);
+        OnUi(() =>
+        {
+            LastError = null;
+            IsListening = true;
+        });
     }
 
     private async Task StopAsync()
@@ -145,7 +165,17 @@ public partial class DictationViewModel : ObservableObject
 
         var orchestrator = new DictationOrchestrator(_audio, engine, _parser, _persian, _injector, options, _expander);
         orchestrator.StateChanged += (_, state) => OnUi(() => StateText = DictationStateText.ToPersian(state));
-        orchestrator.TranscriptionProduced += (_, text) => OnUi(() => AddTranscription(text));
+        orchestrator.TranscriptionProduced += (_, text) =>
+        {
+            // فقط طولِ متن را لاگ می‌کنیم، نه محتوا را (طبق قانون حریم خصوصی CLAUDE.md).
+            Serilog.Log.Information("رونویسی تولید شد ({Len} نویسه).", text.Length);
+            OnUi(() => AddTranscription(text));
+        };
+        orchestrator.ProcessingFailed += (_, ex) =>
+        {
+            Serilog.Log.Error(ex, "خطا در پردازش قطعه/ضبط.");
+            OnUi(() => LastError = ex.Message);
+        };
         _orchestrator = orchestrator;
     }
 
@@ -156,6 +186,7 @@ public partial class DictationViewModel : ObservableObject
             return;
         }
 
+        LastTranscription = text;
         RecentTranscriptions.Insert(0, text);
         while (RecentTranscriptions.Count > 20)
         {

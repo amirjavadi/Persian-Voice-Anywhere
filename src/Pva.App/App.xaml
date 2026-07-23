@@ -5,6 +5,14 @@
              ShutdownMode="OnExplicitShutdown">
     <!-- No StartupUri: the generic host owns startup; app lives in the tray. -->
     <Application.Resources>
-
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- سیستم طراحی Liquid Glass: رنگ‌ها، گرادیان‌ها و استایل کنترل‌ها. -->
+                <ResourceDictionary Source="Themes/LiquidGlass.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <!-- فونت سراسری برنامه: وزیرمتنِ جاسازی‌شده (آفلاین/پرتابل). با DynamicResource از
+                 همه‌ی پنجره‌ها (حتی در اسمبلی‌های دیگر) قابل ارجاع است. -->
+            <FontFamily x:Key="AppFontFamily">pack://application:,,,/Pva.App;component/Assets/Fonts/#Vazirmatn</FontFamily>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

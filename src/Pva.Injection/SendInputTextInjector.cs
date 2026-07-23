@@ -78,5 +78,15 @@ public sealed class SendInputTextInjector : ITextInjector
     }
 
     private static void Send(NativeMethods.INPUT[] inputs)
-        => NativeMethods.SendInput((uint)inputs.Length, inputs, Marshal.SizeOf<NativeMethods.INPUT>());
+    {
+        var sent = NativeMethods.SendInput((uint)inputs.Length, inputs, Marshal.SizeOf<NativeMethods.INPUT>());
+        if (sent != inputs.Length)
+        {
+            // شکستِ بی‌صدا ممنوع: خطا به orchestrator → ProcessingFailed → نمایش به کاربر می‌رسد.
+            var error = Marshal.GetLastWin32Error();
+            throw new InvalidOperationException(
+                $"تزریق متن ناموفق بود (SendInput {sent}/{inputs.Length}، خطای ویندوز {error}). " +
+                "اگر برنامه‌ی مقصد با دسترسی Administrator اجرا شده، این برنامه را هم با همان دسترسی اجرا کنید.");
+        }
+    }
 }

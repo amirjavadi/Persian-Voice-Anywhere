@@ -14,6 +14,13 @@ public interface IAudioCapture : IAsyncDisposable
     /// <summary>پس از تشخیص یک قطعه‌ی گفتاری کامل توسط VAD صادر می‌شود.</summary>
     event EventHandler<AudioSegment>? SegmentReady;
 
+    /// <summary>
+    /// هنگام بروز خطای مهلک در نخِ پردازش صدا (مثلاً خطای VAD/ONNX) صادر می‌شود. ضبط
+    /// متوقف می‌شود؛ مصرف‌کننده باید خطا را به کاربر گزارش دهد تا به‌جای crashِ بی‌صدا،
+    /// بازخورد داده شود.
+    /// </summary>
+    event EventHandler<Exception>? CaptureFailed;
+
     bool IsCapturing { get; }
 
     Task StartAsync(CancellationToken ct = default);

@@ -17,21 +17,36 @@ public sealed class SileroVoiceActivityDetector : IVoiceActivityDetector
 {
     private const int StateLength = 2 * 1 * 128;
 
-    private readonly InferenceSession _session;
+    private readonly string _modelPath;
     private readonly long _sampleRate;
+    private InferenceSession? _session;
     private float[] _state = new float[StateLength];
 
     public SileroVoiceActivityDetector(string modelPath, int sampleRate = 16000)
     {
-        if (!File.Exists(modelPath))
+        // مدل به‌صورت lazy (هنگام اولین ضبط) بارگذاری می‌شود تا نبودِ فایل مدل،
+        // راه‌اندازی برنامه را نشکند و هزینه‌ی Idle نزدیک صفر بماند (طبق CLAUDE.md).
+        _modelPath = modelPath;
+        _sampleRate = sampleRate;
+    }
+
+    private InferenceSession EnsureSession()
+    {
+        if (_session is not null)
         {
-            throw new FileNotFoundException(
-                $"فایل مدل Silero VAD یافت نشد: {modelPath}. آن را در پوشه‌ی models/ کنار فایل اجرایی قرار دهید.",
-                modelPath);
+            return _session;
         }
 
-        _session = new InferenceSession(modelPath);
-        _sampleRate = sampleRate;
+        if (!File.Exists(_modelPath))
+        {
+            throw new FileNotFoundException(
+                $"فایل مدل Silero VAD یافت نشد: {_modelPath}. آن را در پوشه‌ی models/ کنار فایل اجرایی قرار دهید " +
+                "(اسکریپت build/fetch-models.ps1 آن را دانلود می‌کند).",
+                _modelPath);
+        }
+
+        _session = new InferenceSession(_modelPath);
+        return _session;
     }
 
     public float Detect(ReadOnlySpan<float> frame)
@@ -47,7 +62,7 @@ public sealed class SileroVoiceActivityDetector : IVoiceActivityDetector
             NamedOnnxValue.CreateFromTensor("sr", sr),
         };
 
-        using var results = _session.Run(inputs);
+        using var results = EnsureSession().Run(inputs);
 
         // خروجی‌ها به‌ترتیب: [0] احتمال گفتار، [1] حالت جدید.
         var ordered = results.ToList();
@@ -57,7 +72,13 @@ public sealed class SileroVoiceActivityDetector : IVoiceActivityDetector
         return probability;
     }
 
-    public void Reset() => _state = new float[StateLength];
+    public void Reset()
+    {
+        // مدل را همین‌جا (در مسیر شروع ضبط) بارگذاری می‌کنیم تا نبودِ فایل مدل به‌جای
+        // یک استثنای هندل‌نشده روی thread پس‌زمینه‌ی صدا، همین‌جا و قابل‌گزارش رخ دهد.
+        EnsureSession();
+        _state = new float[StateLength];
+    }
 
-    public void Dispose() => _session.Dispose();
+    public void Dispose() => _session?.Dispose();
 }

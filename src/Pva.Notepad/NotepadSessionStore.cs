@@ -11,6 +11,9 @@ public sealed record NotepadDocument
     public string? FilePath { get; init; }
 
     public string Content { get; init; } = string.Empty;
+
+    /// <summary>جهت متن این سند؛ برای نوشتار فارسی پیش‌فرض راست‌به‌چپ است.</summary>
+    public bool IsRightToLeft { get; init; } = true;
 }
 
 /// <summary>وضعیت session نوت‌پد: تب‌های باز + تب فعال.</summary>

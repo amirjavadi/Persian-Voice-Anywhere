@@ -19,11 +19,31 @@ internal static partial class NativeMethods
         public InputUnion U;
     }
 
+    /// <summary>
+    /// union واقعی ویندوز شامل MOUSEINPUT/KEYBDINPUT/HARDWAREINPUT است و اندازه‌اش را
+    /// بزرگ‌ترین عضو (MOUSEINPUT، ۳۲ بایت روی x64) تعیین می‌کند. بدون MOUSEINPUT، اندازه‌ی
+    /// INPUT به‌جای ۴۰ بایت ۳۲ بایت می‌شد و SendInput همه‌ی ورودی‌ها را با خطای ۸۷
+    /// (ERROR_INVALID_PARAMETER) بی‌صدا رد می‌کرد — یعنی هیچ متنی هرگز تایپ نمی‌شد.
+    /// </summary>
     [StructLayout(LayoutKind.Explicit)]
     public struct InputUnion
     {
         [FieldOffset(0)]
+        public MOUSEINPUT Mi;
+
+        [FieldOffset(0)]
         public KEYBDINPUT Ki;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MOUSEINPUT
+    {
+        public int Dx;
+        public int Dy;
+        public uint MouseData;
+        public uint DwFlags;
+        public uint Time;
+        public nint DwExtraInfo;
     }
 
     [StructLayout(LayoutKind.Sequential)]

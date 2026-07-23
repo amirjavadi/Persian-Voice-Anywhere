@@ -2,20 +2,26 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="تاریخچه‌ی کلیپ‌بورد — Persian Voice Anywhere"
-        Height="520" Width="440" WindowStartupLocation="CenterScreen"
-        FlowDirection="RightToLeft" FontFamily="Segoe UI, Tahoma"
-        Background="#0F1013" Foreground="#FAFAFA">
-    <DockPanel Margin="14">
-        <Grid DockPanel.Dock="Top" Margin="0,0,0,10">
+        Height="540" Width="460" WindowStartupLocation="CenterScreen"
+        FlowDirection="RightToLeft" FontFamily="{DynamicResource AppFontFamily}"
+        Background="{DynamicResource PvaBgBrush}" Foreground="{DynamicResource PvaTextBrush}">
+    <DockPanel Margin="16">
+        <!-- سربرگ -->
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,12">
+            <Border Width="5" Height="24" CornerRadius="3" Background="{DynamicResource PvaAccentGradient}"
+                    VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <TextBlock Text="تاریخچه‌ی کلیپ‌بورد" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <Grid DockPanel.Dock="Top" Margin="0,0,0,12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TextBox Grid.Column="0" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
-                     Background="#1B1C20" Foreground="#FAFAFA" BorderBrush="#33FFFFFF" Padding="8"
-                     VerticalContentAlignment="Center"/>
+                     Style="{DynamicResource PvaTextBox}"/>
             <Button Grid.Column="1" Content="پاک‌سازی" Command="{Binding ClearUnpinnedCommand}"
-                    Margin="8,0,0,0" Padding="12,6" Background="#1B1C20" Foreground="#FAFAFA" BorderThickness="0"/>
+                    Style="{DynamicResource PvaGhostButton}" Margin="8,0,0,0"/>
         </Grid>
 
         <ListBox ItemsSource="{Binding Results}" Background="Transparent" BorderThickness="0"
@@ -24,34 +30,48 @@
                 <Style TargetType="ListBoxItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                     <Setter Property="Margin" Value="0,3"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <ContentPresenter/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
                 </Style>
             </ListBox.ItemContainerStyle>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Border Background="#16171B" CornerRadius="10" Padding="10">
+                    <Border x:Name="Card" Background="{DynamicResource PvaSurfaceBrush}" CornerRadius="12"
+                            BorderBrush="{DynamicResource PvaBorderBrush}" BorderThickness="1" Padding="12,10">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="{Binding Text}" TextTrimming="CharacterEllipsis"
-                                       MaxHeight="46" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                                       MaxHeight="46" TextWrapping="Wrap" VerticalAlignment="Center"
+                                       Foreground="{DynamicResource PvaTextBrush}"/>
                             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                                <Button Content="کپی" Padding="8,3" Margin="3,0" Background="#22FFFFFF"
-                                        Foreground="#FAFAFA" BorderThickness="0"
+                                <Button Content="کپی" Style="{DynamicResource PvaGhostButton}" Padding="9,4" Margin="3,0"
                                         Command="{Binding DataContext.CopyCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                         CommandParameter="{Binding}"/>
-                                <ToggleButton Content="📌" IsChecked="{Binding Pinned, Mode=OneWay}" Width="28"
-                                        Background="Transparent" BorderThickness="0" Foreground="#FAFAFA"
+                                <ToggleButton Content="📌" IsChecked="{Binding Pinned, Mode=OneWay}"
+                                        Style="{DynamicResource PvaToggleButton}" Padding="6,4"
                                         Command="{Binding DataContext.PinCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                         CommandParameter="{Binding}"/>
-                                <Button Content="✕" Width="26" Background="Transparent" Foreground="#C0FAFAFA"
-                                        BorderThickness="0"
+                                <Button Content="✕" Style="{DynamicResource PvaIconButton}"
                                         Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                         CommandParameter="{Binding}"/>
                             </StackPanel>
                         </Grid>
                     </Border>
+                    <DataTemplate.Triggers>
+                        <Trigger SourceName="Card" Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Card" Property="BorderBrush" Value="{DynamicResource PvaAccentBrush}"/>
+                        </Trigger>
+                    </DataTemplate.Triggers>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

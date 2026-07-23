@@ -1,4 +1,6 @@
 using System.Collections.Concurrent;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using Pva.Core;
@@ -16,6 +18,7 @@ public sealed class WasapiAudioCapture : IAudioCapture
 {
     private readonly AudioCaptureOptions _options;
     private readonly IVoiceActivityDetector _vad;
+    private readonly ILogger<WasapiAudioCapture> _logger;
 
     private WasapiCapture? _capture;
     private AudioResampler? _resampler;
@@ -24,13 +27,26 @@ public sealed class WasapiAudioCapture : IAudioCapture
     private Thread? _worker;
     private readonly List<float> _frameAccumulator = new();
 
-    public WasapiAudioCapture(AudioCaptureOptions options, IVoiceActivityDetector vad)
+    // شمارنده‌های تشخیصی (فقط برای لاگِ عیب‌یابی؛ بدون ذخیره‌ی محتوای صدا).
+    private long _bufferCount;
+    private long _sampleCount;
+    private long _frameCount;
+    private long _segmentCount;
+    private float _maxProbability;
+
+    public WasapiAudioCapture(
+        AudioCaptureOptions options,
+        IVoiceActivityDetector vad,
+        ILogger<WasapiAudioCapture>? logger = null)
     {
         _options = options;
         _vad = vad;
+        _logger = logger ?? NullLogger<WasapiAudioCapture>.Instance;
     }
 
     public event EventHandler<AudioSegment>? SegmentReady;
+
+    public event EventHandler<Exception>? CaptureFailed;
 
     public bool IsCapturing { get; private set; }
 
@@ -44,11 +60,19 @@ public sealed class WasapiAudioCapture : IAudioCapture
         _vad.Reset();
         _segmenter = new SpeechSegmenter(_options);
         _frameAccumulator.Clear();
+        _bufferCount = _sampleCount = _frameCount = _segmentCount = 0;
+        _maxProbability = 0f;
         _queue = new BlockingCollection<float[]>(new ConcurrentQueue<float[]>());
 
         _capture = new WasapiCapture();
-        _resampler = new AudioResampler(_capture.WaveFormat.SampleRate, _options.SampleRate);
+        var format = _capture.WaveFormat;
+        _resampler = new AudioResampler(format.SampleRate, _options.SampleRate);
         _capture.DataAvailable += OnDataAvailable;
+
+        _logger.LogInformation(
+            "شروع ضبط. دستگاه: {Encoding} {Bits}bit {Channels}ch @ {DeviceRate}Hz → هدف {TargetRate}Hz. تشخیص float: {IsFloat}",
+            format.Encoding, format.BitsPerSample, format.Channels, format.SampleRate,
+            _options.SampleRate, IsFloatFormat(format));
 
         _worker = new Thread(ProcessLoop) { IsBackground = true, Name = "pva-audio-vad" };
         _worker.Start();
@@ -83,8 +107,15 @@ public sealed class WasapiAudioCapture : IAudioCapture
         var tail = _segmenter?.Flush();
         if (tail is not null)
         {
+            _segmentCount++;
             SegmentReady?.Invoke(this, tail);
         }
+
+        // خلاصه‌ی تشخیصی: اگر sampleCount صفر باشد یعنی صدا اصلاً از دستگاه نرسیده؛
+        // اگر maxProb پایین باشد یعنی VAD گفتاری ندیده (میکروفون اشتباه/بی‌صدا).
+        _logger.LogInformation(
+            "پایان ضبط. بافرها: {Buffers}، نمونه‌ها: {Samples}، فریم‌های VAD: {Frames}، بیشینه احتمال گفتار: {MaxProb:F2}، قطعه‌ها: {Segments}",
+            _bufferCount, _sampleCount, _frameCount, _maxProbability, _segmentCount);
 
         _queue?.Dispose();
         _queue = null;
@@ -98,10 +129,19 @@ public sealed class WasapiAudioCapture : IAudioCapture
 
     private void OnDataAvailable(object? sender, WaveInEventArgs e)
     {
+        _bufferCount++;
         var mono = ToMonoFloat(e.Buffer, e.BytesRecorded, _capture!.WaveFormat);
         if (mono.Length > 0)
         {
+            _sampleCount += mono.Length;
             _queue?.Add(mono);
+        }
+        else if (_bufferCount == 1)
+        {
+            // نخستین بافر خالی شد: فرمت دستگاه پشتیبانی نمی‌شود (بدترین حالت پیشین).
+            _logger.LogWarning(
+                "بافر صدا به‌صورت خالی رمزگشایی شد؛ فرمت دستگاه ({Encoding} {Bits}bit) پشتیبانی نمی‌شود.",
+                _capture.WaveFormat.Encoding, _capture.WaveFormat.BitsPerSample);
         }
     }
 
@@ -112,40 +152,65 @@ public sealed class WasapiAudioCapture : IAudioCapture
         var segmenter = _segmenter!;
         var frameSize = _options.FrameSize;
 
-        foreach (var chunk in queue.GetConsumingEnumerable())
+        // نخِ پس‌زمینه؛ هر استثنای هندل‌نشده (مثلاً خطای مدل VAD/ONNX) کل پروسه را می‌کشد.
+        // پس آن را می‌گیریم و از طریق CaptureFailed گزارش می‌کنیم تا crashِ بی‌صدا رخ ندهد.
+        try
         {
-            var resampled = resampler.Resample(chunk);
-            _frameAccumulator.AddRange(resampled);
-
-            while (_frameAccumulator.Count >= frameSize)
+            foreach (var chunk in queue.GetConsumingEnumerable())
             {
-                var frame = new float[frameSize];
-                _frameAccumulator.CopyTo(0, frame, 0, frameSize);
-                _frameAccumulator.RemoveRange(0, frameSize);
+                var resampled = resampler.Resample(chunk);
+                _frameAccumulator.AddRange(resampled);
 
-                var probability = _vad.Detect(frame);
-                var segment = segmenter.Accept(frame, probability);
-                if (segment is not null)
+                while (_frameAccumulator.Count >= frameSize)
                 {
-                    SegmentReady?.Invoke(this, segment);
+                    var frame = new float[frameSize];
+                    _frameAccumulator.CopyTo(0, frame, 0, frameSize);
+                    _frameAccumulator.RemoveRange(0, frameSize);
+
+                    _frameCount++;
+                    var probability = _vad.Detect(frame);
+                    if (probability > _maxProbability)
+                    {
+                        _maxProbability = probability;
+                    }
+
+                    var segment = segmenter.Accept(frame, probability);
+                    if (segment is not null)
+                    {
+                        _segmentCount++;
+                        _logger.LogInformation(
+                            "قطعه‌ی گفتاری تولید شد: {Ms}ms",
+                            (int)segment.Duration.TotalMilliseconds);
+                        SegmentReady?.Invoke(this, segment);
+                    }
                 }
             }
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "خطای مهلک در نخِ پردازش صدا.");
+            CaptureFailed?.Invoke(this, ex);
+        }
     }
+
+    // زیرفرمت‌های WaveFormatExtensible (پرکاربردترین فرمتِ mix اشتراکی WASAPI روی ویندوز).
+    private static readonly Guid SubTypeIeeeFloat = new("00000003-0000-0010-8000-00aa00389b71");
 
     /// <summary>بایت‌های خام دستگاه را به نمونه‌های float تک‌کاناله تبدیل می‌کند.</summary>
     private static float[] ToMonoFloat(byte[] buffer, int bytesRecorded, WaveFormat format)
     {
         var channels = format.Channels;
+        var isFloat = IsFloatFormat(format);
+        var bits = format.BitsPerSample;
         float[] samples;
 
-        if (format.Encoding == WaveFormatEncoding.IeeeFloat && format.BitsPerSample == 32)
+        if (isFloat && bits == 32)
         {
             var count = bytesRecorded / 4;
             samples = new float[count];
             Buffer.BlockCopy(buffer, 0, samples, 0, count * 4);
         }
-        else if (format.Encoding == WaveFormatEncoding.Pcm && format.BitsPerSample == 16)
+        else if (!isFloat && bits == 16)
         {
             var count = bytesRecorded / 2;
             samples = new float[count];
@@ -155,9 +220,20 @@ public sealed class WasapiAudioCapture : IAudioCapture
                 samples[i] = s / 32768f;
             }
         }
+        else if (!isFloat && bits == 32)
+        {
+            // PCM صحیحِ ۳۲ بیتی (برخی دستگاه‌ها).
+            var count = bytesRecorded / 4;
+            samples = new float[count];
+            for (var i = 0; i < count; i++)
+            {
+                var s = BitConverter.ToInt32(buffer, i * 4);
+                samples[i] = s / 2147483648f;
+            }
+        }
         else
         {
-            // فرمت پشتیبانی‌نشده: خالی برگردان (در اجرای واقعی، فرمت WASAPI معمولاً float32 است).
+            // فرمت واقعاً پشتیبانی‌نشده (مثلاً ۲۴ بیتی packed): خالی برگردان.
             return [];
         }
 
@@ -181,5 +257,32 @@ public sealed class WasapiAudioCapture : IAudioCapture
         }
 
         return mono;
+    }
+
+    /// <summary>
+    /// تشخیص اینکه نمونه‌ها IEEE float هستند یا PCM صحیح. فرمت mix اشتراکی WASAPI معمولاً
+    /// به‌صورت <see cref="WaveFormatExtensible"/> (Encoding = Extensible) گزارش می‌شود، نه
+    /// مستقیماً IeeeFloat؛ در آن حالت باید زیرفرمت (SubFormat) بررسی شود، وگرنه صدا بی‌صدا
+    /// دور ریخته می‌شد و برنامه اصلاً ضبط نمی‌کرد.
+    /// </summary>
+    private static bool IsFloatFormat(WaveFormat format)
+    {
+        if (format.Encoding == WaveFormatEncoding.IeeeFloat)
+        {
+            return true;
+        }
+
+        if (format.Encoding == WaveFormatEncoding.Pcm)
+        {
+            return false;
+        }
+
+        if (format is WaveFormatExtensible extensible)
+        {
+            return extensible.SubFormat == SubTypeIeeeFloat;
+        }
+
+        // فرمت ناشناخته: ۳۲ بیتی معمولاً float است (mix اشتراکی WASAPI).
+        return format.BitsPerSample == 32;
     }
 }

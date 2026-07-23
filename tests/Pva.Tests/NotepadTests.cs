@@ -72,6 +72,44 @@ public class NotepadTests : IDisposable
         Assert.Contains(second.Documents, d => d.Content == "متن ذخیره‌شده");
     }
 
+    [Fact]
+    public void NewCommand_PersistsSessionImmediately()
+    {
+        var store = Store();
+        var first = new NotepadViewModel(store);
+        first.NewCommand.Execute(null);
+
+        // بدون فراخوانی دستی SaveSession، session باید همان لحظه ذخیره شده باشد.
+        var reloaded = store.Load();
+        Assert.Equal(2, reloaded.Documents.Count);
+    }
+
+    [Fact]
+    public void ToggleDirection_FlipsActiveDocument_AndPersists()
+    {
+        var store = Store();
+        var vm = new NotepadViewModel(store);
+        var before = vm.ActiveDocument!.IsRightToLeft;
+
+        vm.ToggleDirectionCommand.Execute(null);
+
+        Assert.Equal(!before, vm.ActiveDocument.IsRightToLeft);
+        Assert.Equal(!before, store.Load().Documents[0].IsRightToLeft);
+    }
+
+    [Fact]
+    public void EditingContent_MarksDirty_AndTabHeaderShowsIndicator()
+    {
+        var doc = new NotepadDocumentViewModel();
+        Assert.False(doc.IsDirty);
+
+        doc.Content = "تغییر";
+
+        Assert.True(doc.IsDirty);
+        Assert.StartsWith("●", doc.TabHeader);
+        Assert.Equal(1, doc.WordCount);
+    }
+
     public void Dispose()
     {
         if (File.Exists(_path))

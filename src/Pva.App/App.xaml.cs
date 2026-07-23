@@ -40,6 +40,18 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        // شبکه‌ی ایمنی: هر استثنای هندل‌نشده‌ی UI به‌جای crash خام، لاگ و به کاربر گزارش می‌شود.
+        DispatcherUnhandledException += (_, args) =>
+        {
+            Log.Error(args.Exception, "استثنای هندل‌نشده در UI thread");
+            MessageBox.Show(
+                args.Exception.Message,
+                "Persian Voice Anywhere — خطا",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+            args.Handled = true;
+        };
+
         var logDirectory = Path.Combine(AppContext.BaseDirectory, "logs");
         Directory.CreateDirectory(logDirectory);
 
@@ -156,8 +168,8 @@ public partial class App : Application
 
         return new TaskbarIcon
         {
-            ToolTipText = "Persian Voice Anywhere",
-            Icon = System.Drawing.SystemIcons.Application,
+            ToolTipText = "Persian Voice Anywhere — دیکته‌ی فارسی آفلاین",
+            Icon = TrayIconFactory.Create(),
             ContextMenu = menu,
         };
     }

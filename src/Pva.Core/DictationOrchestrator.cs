@@ -69,6 +69,7 @@ public sealed class DictationOrchestrator : IAsyncDisposable
 
         IsRunning = true;
         _audio.SegmentReady += OnSegmentReady;
+        _audio.CaptureFailed += OnCaptureFailed;
         SetState(DictationState.Listening);
         await _audio.StartAsync(ct);
     }
@@ -82,6 +83,7 @@ public sealed class DictationOrchestrator : IAsyncDisposable
 
         IsRunning = false;
         _audio.SegmentReady -= OnSegmentReady;
+        _audio.CaptureFailed -= OnCaptureFailed;
         await _audio.StopAsync(ct);
         SetState(DictationState.Idle);
     }
@@ -138,6 +140,20 @@ public sealed class DictationOrchestrator : IAsyncDisposable
 
     private async void OnSegmentReady(object? sender, AudioSegment segment)
         => await ProcessSegmentAsync(segment);
+
+    // خطای مهلکِ نخِ صدا: ضبط را متوقف و خطا را به مصرف‌کننده گزارش می‌کنیم.
+    private async void OnCaptureFailed(object? sender, Exception ex)
+    {
+        ProcessingFailed?.Invoke(this, ex);
+        try
+        {
+            await StopAsync();
+        }
+        catch
+        {
+            // در حین توقفِ اضطراری، خطای ثانویه را نادیده می‌گیریم.
+        }
+    }
 
     private void SetState(DictationState state)
     {

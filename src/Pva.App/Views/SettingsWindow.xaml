@@ -2,9 +2,9 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="تنظیمات — Persian Voice Anywhere"
-        Height="440" Width="460" WindowStartupLocation="CenterScreen"
-        FlowDirection="RightToLeft" FontFamily="Segoe UI, Tahoma"
-        Background="#0F1013" Foreground="#FAFAFA">
+        Height="620" Width="480" WindowStartupLocation="CenterScreen"
+        FlowDirection="RightToLeft" FontFamily="{DynamicResource AppFontFamily}"
+        Background="{DynamicResource PvaBgBrush}" Foreground="{DynamicResource PvaTextBrush}">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
     </Window.Resources>
@@ -15,29 +15,68 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="تنظیمات" FontSize="20" FontWeight="Bold" Margin="0,0,0,16"/>
-
-        <StackPanel Grid.Row="1">
-            <TextBlock Text="کلید میانبر" Opacity="0.7" Margin="0,0,0,4"/>
-            <TextBox Text="{Binding HotkeyGesture, UpdateSourceTrigger=PropertyChanged}"
-                     Background="#1B1C20" Foreground="#FAFAFA" BorderBrush="#33FFFFFF"
-                     Padding="8" Margin="0,0,0,14"/>
-
-            <CheckBox Content="حالت Push-to-Talk (نگه‌داشتن برای ضبط)" IsChecked="{Binding PushToTalk}" Margin="0,6" Foreground="#FAFAFA"/>
-            <CheckBox Content="ترجیح Faster Whisper (در صورت نصب engine pack)" IsChecked="{Binding PreferFasterWhisper}" Margin="0,6" Foreground="#FAFAFA"/>
-            <CheckBox Content="استفاده از GPU در صورت وجود" IsChecked="{Binding UseGpu}" Margin="0,6" Foreground="#FAFAFA"/>
-            <CheckBox Content="اصلاح هوشمند فارسی (نیم‌فاصله و علائم)" IsChecked="{Binding SmartCorrection}" Margin="0,6" Foreground="#FAFAFA"/>
-            <CheckBox Content="ارقام فارسی" IsChecked="{Binding UsePersianDigits}" Margin="0,6" Foreground="#FAFAFA"/>
-            <CheckBox Content="فعال‌بودن دستورهای صوتی" IsChecked="{Binding CommandModeEnabled}" Margin="0,6" Foreground="#FAFAFA"/>
-
-            <TextBlock Text="شفافیت میکروفون شناور" Opacity="0.7" Margin="0,14,0,4"/>
-            <Slider Minimum="0.4" Maximum="1.0" Value="{Binding MicOpacity}"/>
+        <!-- سربرگ با نوار گرادیانی برند -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,18">
+            <Border Width="5" Height="26" CornerRadius="3" Background="{DynamicResource PvaAccentGradient}"
+                    VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <TextBlock Text="تنظیمات" FontSize="21" FontWeight="Bold" VerticalAlignment="Center"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,16,0,0">
-            <Button Content="ذخیره" Command="{Binding SaveCommand}" Padding="18,8"
-                    Background="#FAFAFA" Foreground="#0F1013" BorderThickness="0" Cursor="Hand"/>
-            <TextBlock Text="ذخیره شد ✓" Foreground="#6EE7A8" VerticalAlignment="Center"
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- ضبط و میانبر -->
+                <Border Style="{DynamicResource PvaCard}" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="🎙 ضبط و میانبر" Style="{DynamicResource PvaSectionTitle}"/>
+                        <TextBlock Text="کلید میانبر سراسری" Foreground="{DynamicResource PvaTextMutedBrush}"
+                                   FontSize="12" Margin="0,0,0,5"/>
+                        <TextBox Text="{Binding HotkeyGesture, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{DynamicResource PvaTextBox}" Margin="0,0,0,10"/>
+                        <CheckBox Content="حالت Push-to-Talk (نگه‌داشتن برای ضبط)"
+                                  IsChecked="{Binding PushToTalk}" Style="{DynamicResource PvaCheckBox}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- موتور تشخیص گفتار -->
+                <Border Style="{DynamicResource PvaCard}" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="🧠 موتور تشخیص گفتار" Style="{DynamicResource PvaSectionTitle}"/>
+                        <CheckBox Content="ترجیح Faster Whisper (در صورت نصب engine pack)"
+                                  IsChecked="{Binding PreferFasterWhisper}" Style="{DynamicResource PvaCheckBox}"/>
+                        <CheckBox Content="استفاده از GPU در صورت وجود"
+                                  IsChecked="{Binding UseGpu}" Style="{DynamicResource PvaCheckBox}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- فارسی‌سازی -->
+                <Border Style="{DynamicResource PvaCard}" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="✨ فارسی‌سازی و دستورها" Style="{DynamicResource PvaSectionTitle}"/>
+                        <CheckBox Content="اصلاح هوشمند فارسی (نیم‌فاصله و علائم)"
+                                  IsChecked="{Binding SmartCorrection}" Style="{DynamicResource PvaCheckBox}"/>
+                        <CheckBox Content="ارقام فارسی"
+                                  IsChecked="{Binding UsePersianDigits}" Style="{DynamicResource PvaCheckBox}"/>
+                        <CheckBox Content="فعال‌بودن دستورهای صوتی (خط جدید، پاک کن…)"
+                                  IsChecked="{Binding CommandModeEnabled}" Style="{DynamicResource PvaCheckBox}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- ظاهر -->
+                <Border Style="{DynamicResource PvaCard}">
+                    <StackPanel>
+                        <TextBlock Text="🎨 ظاهر" Style="{DynamicResource PvaSectionTitle}"/>
+                        <TextBlock Text="شفافیت میکروفون شناور" Foreground="{DynamicResource PvaTextMutedBrush}"
+                                   FontSize="12" Margin="0,0,0,6"/>
+                        <Slider Minimum="0.4" Maximum="1.0" Value="{Binding MicOpacity}"
+                                Foreground="{DynamicResource PvaAccentBrush}"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,18,0,0">
+            <Button Content="ذخیره" Command="{Binding SaveCommand}" Style="{DynamicResource PvaPrimaryButton}"/>
+            <TextBlock Text="ذخیره شد ✓" Foreground="{DynamicResource PvaSuccessBrush}" VerticalAlignment="Center"
                        Margin="12,0,0,0" Visibility="{Binding Saved, Converter={StaticResource BoolToVis}}"/>
         </StackPanel>
     </Grid>

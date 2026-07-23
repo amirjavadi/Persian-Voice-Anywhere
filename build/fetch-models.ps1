@@ -1,4 +1,4 @@
-# دانلود مدل‌های لازم برای Persian Voice Anywhere.
+﻿# دانلود مدل‌های لازم برای Persian Voice Anywhere.
 # اجرا:  pwsh ./build/fetch-models.ps1
 #        pwsh ./build/fetch-models.ps1 -WhisperModel small -OutDir C:\PVA\models
 #
@@ -34,9 +34,12 @@ function Get-Model {
     Write-Host "   انجام شد ($sizeMb MB): $Dest" -ForegroundColor Green
 }
 
-# 1) Silero VAD (v5، ONNX)
-Get-Model -Name 'Silero VAD' `
-    -Url 'https://raw.githubusercontent.com/snakers4/silero-vad/master/src/silero_vad/data/silero_vad.onnx' `
+# 1) Silero VAD (نسخه‌ی pin‌شده v5.1، ONNX)
+# مهم: از تگِ v5.1 استفاده می‌کنیم، نه شاخه‌ی master. مدلِ روی master با ONNX Runtime
+# فعلی ناسازگار است و روی گفتار همیشه احتمال ~۰ می‌دهد (VAD هیچ‌گاه گفتار را تشخیص
+# نمی‌دهد و برنامه اصلاً چیزی ضبط نمی‌کند). نسخه‌ی v5.1 با فریم ۵۱۲ درست کار می‌کند.
+Get-Model -Name 'Silero VAD (v5.1)' `
+    -Url 'https://raw.githubusercontent.com/snakers4/silero-vad/v5.1/src/silero_vad/data/silero_vad.onnx' `
     -Dest (Join-Path $OutDir 'silero_vad.onnx')
 
 # 2) Whisper (ggml برای whisper.cpp)

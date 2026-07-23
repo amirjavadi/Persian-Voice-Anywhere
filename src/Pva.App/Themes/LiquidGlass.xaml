@@ -1,0 +1,247 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ═══════════════════════ Liquid Glass — سیستم طراحی PVA ═══════════════════════
+         هویت برند: فیروزه‌ای #13B9AC + بنفش #6D5EF6 روی شیشه‌ی تیره (docs/design-language.md).
+         همه‌ی پنجره‌ها (در هر اسمبلی) این منابع را با DynamicResource مصرف می‌کنند. -->
+
+    <!-- ── رنگ‌ها ── -->
+    <Color x:Key="PvaBgColor">#0E0F14</Color>
+    <Color x:Key="PvaSurfaceColor">#161821</Color>
+    <Color x:Key="PvaSurfaceAltColor">#1D1F2B</Color>
+    <Color x:Key="PvaAccentColor">#13B9AC</Color>
+    <Color x:Key="PvaVioletColor">#6D5EF6</Color>
+
+    <SolidColorBrush x:Key="PvaBgBrush" Color="#0E0F14"/>
+    <SolidColorBrush x:Key="PvaSurfaceBrush" Color="#161821"/>
+    <SolidColorBrush x:Key="PvaSurfaceAltBrush" Color="#1D1F2B"/>
+    <SolidColorBrush x:Key="PvaBorderBrush" Color="#2AFFFFFF"/>
+    <SolidColorBrush x:Key="PvaTextBrush" Color="#F5F6FA"/>
+    <SolidColorBrush x:Key="PvaTextMutedBrush" Color="#9FA3B5"/>
+    <SolidColorBrush x:Key="PvaAccentBrush" Color="#13B9AC"/>
+    <SolidColorBrush x:Key="PvaVioletBrush" Color="#6D5EF6"/>
+    <SolidColorBrush x:Key="PvaDangerBrush" Color="#FF7A85"/>
+    <SolidColorBrush x:Key="PvaSuccessBrush" Color="#5EE0A0"/>
+
+    <LinearGradientBrush x:Key="PvaAccentGradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#13B9AC" Offset="0"/>
+        <GradientStop Color="#6D5EF6" Offset="1"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="PvaAccentGradientSoft" StartPoint="0,0" EndPoint="1,1" Opacity="0.16">
+        <GradientStop Color="#13B9AC" Offset="0"/>
+        <GradientStop Color="#6D5EF6" Offset="1"/>
+    </LinearGradientBrush>
+
+    <RadialGradientBrush x:Key="PvaOrbGradient" GradientOrigin="0.32,0.28" Center="0.5,0.5" RadiusX="0.85" RadiusY="0.85">
+        <GradientStop Color="#3ADBC9" Offset="0"/>
+        <GradientStop Color="#13B9AC" Offset="0.45"/>
+        <GradientStop Color="#6D5EF6" Offset="1"/>
+    </RadialGradientBrush>
+
+    <!-- ── دکمه‌ی اصلی (گرادیان برند) ── -->
+    <Style x:Key="PvaPrimaryButton" TargetType="Button">
+        <Setter Property="Foreground" Value="{DynamicResource PvaTextBrush}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Padding" Value="20,9"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" CornerRadius="10" Background="{DynamicResource PvaAccentGradient}"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.88"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.75"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.4"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ── دکمه‌ی شبح (کم‌رنگ، برای toolbar) ── -->
+    <Style x:Key="PvaGhostButton" TargetType="Button">
+        <Setter Property="Foreground" Value="{DynamicResource PvaTextBrush}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" CornerRadius="8" Background="Transparent"
+                            BorderBrush="Transparent" BorderThickness="1"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="#1CFFFFFF"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PvaBorderBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="#30FFFFFF"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ── دکمه‌ی آیکونی کوچک (بستن تب، پین…) ── -->
+    <Style x:Key="PvaIconButton" TargetType="Button" BasedOn="{StaticResource PvaGhostButton}">
+        <Setter Property="Padding" Value="6,3"/>
+        <Setter Property="Foreground" Value="{DynamicResource PvaTextMutedBrush}"/>
+    </Style>
+
+    <!-- ── ToggleButton سبک toolbar (فعال = گرادیان برند) ── -->
+    <Style x:Key="PvaToggleButton" TargetType="ToggleButton">
+        <Setter Property="Foreground" Value="{DynamicResource PvaTextBrush}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border x:Name="Bd" CornerRadius="8" Background="Transparent"
+                            BorderBrush="Transparent" BorderThickness="1"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="#1CFFFFFF"/>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource PvaAccentGradientSoft}"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PvaAccentBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ── TextBox شیشه‌ای ── -->
+    <Style x:Key="PvaTextBox" TargetType="TextBox">
+        <Setter Property="Background" Value="{DynamicResource PvaSurfaceBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource PvaTextBrush}"/>
+        <Setter Property="CaretBrush" Value="{DynamicResource PvaAccentBrush}"/>
+        <Setter Property="SelectionBrush" Value="{DynamicResource PvaAccentBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource PvaBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="10,8"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border x:Name="Bd" CornerRadius="10"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Padding="{TemplateBinding Padding}">
+                        <ScrollViewer x:Name="PART_ContentHost"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PvaAccentBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ── CheckBox با تیک برند ── -->
+    <Style x:Key="PvaCheckBox" TargetType="CheckBox">
+        <Setter Property="Foreground" Value="{DynamicResource PvaTextBrush}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Margin" Value="0,7"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <StackPanel Orientation="Horizontal" Background="Transparent">
+                        <Border x:Name="Box" Width="19" Height="19" CornerRadius="6"
+                                Background="{DynamicResource PvaSurfaceAltBrush}"
+                                BorderBrush="{DynamicResource PvaBorderBrush}" BorderThickness="1.2"
+                                VerticalAlignment="Center">
+                            <Path x:Name="Check" Data="M4,10 L8,13.5 L15,5" Stroke="#FFFFFF"
+                                  StrokeThickness="2.2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                  Opacity="0"/>
+                        </Border>
+                        <ContentPresenter Margin="9,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Box" Property="Background" Value="{DynamicResource PvaAccentGradient}"/>
+                            <Setter TargetName="Box" Property="BorderBrush" Value="Transparent"/>
+                            <Setter TargetName="Check" Property="Opacity" Value="1"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource PvaAccentBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ── TabItem با زیرخط گرادیانی ── -->
+    <Style x:Key="PvaTabItem" TargetType="TabItem">
+        <Setter Property="Foreground" Value="{DynamicResource PvaTextMutedBrush}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabItem">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="3"/>
+                        </Grid.RowDefinitions>
+                        <Border x:Name="Bd" Grid.Row="0" CornerRadius="8,8,0,0" Background="Transparent"
+                                Padding="13,8">
+                            <ContentPresenter ContentSource="Header" VerticalAlignment="Center"
+                                              TextElement.Foreground="{TemplateBinding Foreground}"/>
+                        </Border>
+                        <Border x:Name="Underline" Grid.Row="1" Height="3" CornerRadius="2"
+                                Background="{DynamicResource PvaAccentGradient}" Opacity="0" Margin="6,0"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="#14FFFFFF"/>
+                            <Setter TargetName="Underline" Property="Opacity" Value="1"/>
+                            <Setter Property="Foreground" Value="{DynamicResource PvaTextBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="#10FFFFFF"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ── کارت شیشه‌ای (بخش‌های تنظیمات، آیتم‌های کلیپ‌بورد) ── -->
+    <Style x:Key="PvaCard" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource PvaSurfaceBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource PvaBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="14"/>
+        <Setter Property="Padding" Value="16"/>
+    </Style>
+
+    <!-- ── عنوان بخش با نقطه‌ی گرادیانی ── -->
+    <Style x:Key="PvaSectionTitle" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource PvaTextBrush}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Margin" Value="0,0,0,10"/>
+    </Style>
+
+</ResourceDictionary>

@@ -9,11 +9,13 @@ public class DictationOrchestratorTests
     private sealed class FakeAudioCapture : IAudioCapture
     {
         public event EventHandler<AudioSegment>? SegmentReady;
+        public event EventHandler<Exception>? CaptureFailed;
         public bool IsCapturing { get; private set; }
         public Task StartAsync(CancellationToken ct = default) { IsCapturing = true; return Task.CompletedTask; }
         public Task StopAsync(CancellationToken ct = default) { IsCapturing = false; return Task.CompletedTask; }
         public ValueTask DisposeAsync() => ValueTask.CompletedTask;
         public void Emit(AudioSegment s) => SegmentReady?.Invoke(this, s);
+        public void Fail(Exception ex) => CaptureFailed?.Invoke(this, ex);
     }
 
     private sealed class FakeEngine(string text) : ISpeechToTextEngine
@@ -119,5 +121,26 @@ public class DictationOrchestratorTests
         Assert.False(orchestrator.IsRunning);
         Assert.False(audio.IsCapturing);
         Assert.Equal(DictationState.Idle, orchestrator.State);
+    }
+
+    [Fact]
+    public async Task CaptureFailure_RaisesProcessingFailed_AndStops()
+    {
+        var audio = new FakeAudioCapture();
+        var orchestrator = new DictationOrchestrator(audio, new FakeEngine("x"), new FakeParser(),
+            new PersianTextProcessor(), new RecordingInjector());
+        Exception? reported = null;
+        orchestrator.ProcessingFailed += (_, ex) => reported = ex;
+
+        await orchestrator.StartAsync();
+        audio.Fail(new InvalidOperationException("خطای صدا"));
+
+        // OnCaptureFailed آسنکرون است؛ اجازه بده حلقه‌ی توقف کامل شود.
+        await Task.Delay(50);
+
+        Assert.NotNull(reported);
+        Assert.Equal("خطای صدا", reported!.Message);
+        Assert.False(orchestrator.IsRunning);
+        Assert.False(audio.IsCapturing);
     }
 }
