@@ -12,19 +12,30 @@ namespace Pva.Stt;
 public sealed class WhisperCppEngine : ISpeechToTextEngine
 {
     private WhisperFactory? _factory;
+    private int _threads;
 
     public SpeechEngineKind Kind => SpeechEngineKind.WhisperCpp;
 
-    /// <summary>GPU در بسته‌ی پایه فعال نیست؛ با نصب Whisper.net.Runtime.* مناسب فعال می‌شود (بعد از v1).</summary>
-    public bool SupportsGpu => false;
+    /// <summary>شتاب GPU از طریق Vulkan (ADR-0013)؛ در نبودِ درایور/GPU خودکار به CPU برمی‌گردد.</summary>
+    public bool SupportsGpu => true;
 
     public bool IsLoaded => _factory is not null;
 
     public Task LoadAsync(ModelConfig config, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(config);
+
+        // ترتیب runtime بر اساس دستگاه: Vulkan (در Auto/Gpu) با fallback به CPU.
+        // benchmark روی i7-1355U + Iris Xe: small-q5_1 با Vulkan ~0.4x realtime در برابر
+        // ~1.1x روی CPU؛ turbo فقط با GPU قابل‌استفاده است (روی CPU: ~11x).
+        Whisper.net.LibraryLoader.RuntimeOptions.RuntimeLibraryOrder = config.Device == ComputeDevice.Cpu
+            ? [Whisper.net.LibraryLoader.RuntimeLibrary.Cpu]
+            : [Whisper.net.LibraryLoader.RuntimeLibrary.Vulkan, Whisper.net.LibraryLoader.RuntimeLibrary.Cpu];
+
         // WhisperFactory.FromPath در صورت نبودِ فایل، استثنا می‌دهد که resolver آن را می‌گیرد.
         _factory = WhisperFactory.FromPath(config.ModelPath);
+        // پیش‌فرض: همه‌ی هسته‌های فیزیکی منهای یکی (تا UI و ضبط نفس بکشند).
+        _threads = config.Threads ?? Math.Max(2, Environment.ProcessorCount - 1);
         return Task.CompletedTask;
     }
 
@@ -35,11 +46,16 @@ public sealed class WhisperCppEngine : ISpeechToTextEngine
             throw new InvalidOperationException("موتور بارگذاری نشده است؛ ابتدا LoadAsync را صدا بزنید.");
         }
 
-        var builder = _factory.CreateBuilder().WithLanguage(options.Language);
+        var builder = _factory.CreateBuilder()
+            .WithLanguage(options.Language)
+            .WithThreads(_threads);
         if (!string.IsNullOrWhiteSpace(options.InitialPrompt))
         {
             builder = builder.WithPrompt(options.InitialPrompt);
         }
+
+        // beam search به‌جای greedy: دقت بالاتر روی فارسی به بهای کمی سرعت (ارزشش را دارد).
+        builder.WithBeamSearchSamplingStrategy();
 
         await using var processor = builder.Build();
 

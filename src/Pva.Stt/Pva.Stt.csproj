@@ -9,6 +9,8 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.10" />
     <PackageReference Include="Whisper.net" Version="1.9.1" />
     <PackageReference Include="Whisper.net.Runtime" Version="1.9.1" />
+    <!-- ADR-0013: شتاب GPU با Vulkan (iGPU اینتل/AMD/NVIDIA را پوشش می‌دهد؛ fallback خودکار به CPU). -->
+    <PackageReference Include="Whisper.net.Runtime.Vulkan" Version="1.9.1" />
   </ItemGroup>
 
   <PropertyGroup>

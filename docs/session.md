@@ -324,4 +324,27 @@ WhisperCppEngine) روی jfk.wav → ۳ قطعه، رونویسیِ درست:
 متن باید تایپ شود (این‌بار SendInput واقعاً ارسال می‌کند؛ اگر برنامه‌ی مقصد Admin است،
 PVA را هم Admin اجرا کنید).
 
+## سشن ۱۴ — 2026-07-23 — ارتقای کیفیت تشخیص: مدل قوی‌تر + Vulkan (ADR-0013) 🚀
+
+مالک از کیفیت ناراضی بود (مقایسه با Web Speech API کروم = بازشناسی ابری گوگل).
+benchmark واقعی روی سخت‌افزار مرجع (i7-1355U + Iris Xe) گرفته شد — جدول در ADR-0013.
+یافته‌ی کلیدی: turbo روی CPU ~۱۱x realtime (غیرقابل‌استفاده) اما با **Vulkan** روی همان
+iGPU به 2.3x می‌رسد؛ small-q5_1 با Vulkan به **0.43x** (هر جمله ~۱.۵ ثانیه).
+
+**تغییرات:**
+- `Whisper.net.Runtime.Vulkan` اضافه شد؛ `WhisperCppEngine` بر اساس Device ترتیب
+  runtime را می‌چیند (Auto/Gpu → Vulkan با fallback CPU). `SupportsGpu = true`.
+- beam search + threads (هسته‌ها منهای یک) در موتور.
+- انتخاب خودکار مدل دستگاه‌آگاه: Auto/Cpu → small-q5_1؛ Gpu صریح → turbo.
+- پرامپت فارسی نمونه‌محور در `PersianInitialPrompt`.
+- `fetch-models.ps1`: پیش‌فرض `small` (ggml-small-q5_1)؛ گزینه‌ی `turbo` برای GPU.
+- مدل‌های small-q5_1 و turbo-q5_0 دانلود و کنار exe کپی شدند.
+
+**تأیید با موتور واقعی محصول:** small-q5_1 + Auto (Vulkan) + beam → **0.47x realtime**
+(جمله‌ها در ۱.۲–۱.۸ ثانیه). ✅ `dotnet test` → ۱۰۹/۱۰۹.
+
+**نکته برای مالک:** اولین رونویسی هر اجرا روی Vulkan ~۱۰ ثانیه گرم‌کردن دارد (یک‌بار).
+اگر «کیفیت حداکثری» خواستی: در تنظیمات «استفاده از GPU» را روشن کن تا turbo انتخاب
+شود (پاسخ ~۴-۵ ثانیه بعد از هر جمله، دقت نزدیک کروم).
+
 </div>

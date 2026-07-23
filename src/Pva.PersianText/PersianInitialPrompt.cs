@@ -6,8 +6,10 @@ namespace Pva.PersianText;
 /// </summary>
 public static class PersianInitialPrompt
 {
+    // نکته: Whisper «سبک» پرامپت را تقلید می‌کند، پس نمونه‌ی خوش‌نگارش (نیم‌فاصله‌ی درست،
+    // ترکیب فارسی/انگلیسی، علائم) بسیار مؤثرتر از جمله‌ی دستوری است.
     public const string Default =
-        "متن زیر به زبان فارسی است و ممکن است شامل اصطلاحات فنی و نام‌های انگلیسی باشد، " +
-        "مانند GitHub، Pull Request، JavaScript، Docker، Visual Studio و API. " +
-        "نگارش درست فارسی با نیم‌فاصله و علائم نگارشی رعایت شود.";
+        "امروز یک Pull Request روی GitHub زدم و کد JavaScript را در Visual Studio بررسی کردم. " +
+        "می‌خواهم با Docker و API کار کنم؛ فایل‌ها را ذخیره می‌کنم و نتیجه‌اش را می‌بینم. " +
+        "این متن‌ها با نیم‌فاصله و علائم نگارشی درست نوشته شده‌اند.";
 }

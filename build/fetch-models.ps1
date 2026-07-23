@@ -7,8 +7,10 @@
 #   $env:HTTPS_PROXY = 'http://127.0.0.1:PORT'
 
 param(
-    [ValidateSet('tiny', 'base', 'small', 'medium')]
-    [string]$WhisperModel = 'base',
+    # small = ggml-small-q5_1 (~۱۹۰MB): نقطه‌ی تعادل دقت/سرعت — پیش‌فرض پیشنهادی.
+    # turbo = large-v3-turbo-q5_0 (~۵۷۴MB): بهترین دقت؛ فقط با GPU (Vulkan) قابل‌استفاده است.
+    [ValidateSet('tiny', 'base', 'small', 'medium', 'turbo')]
+    [string]$WhisperModel = 'small',
     [string]$OutDir = ''
 )
 
@@ -43,9 +45,14 @@ Get-Model -Name 'Silero VAD (v5.1)' `
     -Dest (Join-Path $OutDir 'silero_vad.onnx')
 
 # 2) Whisper (ggml برای whisper.cpp)
-Get-Model -Name "Whisper ggml-$WhisperModel" `
-    -Url "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-$WhisperModel.bin" `
-    -Dest (Join-Path $OutDir "ggml-$WhisperModel.bin")
+$whisperFile = switch ($WhisperModel) {
+    'turbo' { 'ggml-large-v3-turbo-q5_0.bin' }
+    'small' { 'ggml-small-q5_1.bin' }
+    default { "ggml-$WhisperModel.bin" }
+}
+Get-Model -Name "Whisper $whisperFile" `
+    -Url "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/$whisperFile" `
+    -Dest (Join-Path $OutDir $whisperFile)
 
 Write-Host ''
 Write-Host "مدل‌ها در: $OutDir" -ForegroundColor Green
