@@ -31,7 +31,7 @@
 | UI                 | **WPF** + **WPF-UI** (Fluent Design، ظاهر Windows 11)          |
 | MVVM               | CommunityToolkit.Mvvm                                          |
 | DI / composition   | Microsoft.Extensions.DependencyInjection + Hosting            |
-| موتور STT          | هیبرید: **Whisper.net (whisper.cpp)** پیش‌فرض + **Faster Whisper** اختیاری، هر دو پشت `ISpeechToTextEngine` |
+| موتور STT          | هیبرید: **Whisper.net (whisper.cpp)** پیش‌فرض + **Faster Whisper** اختیاری، هر دو پشت `ISpeechToTextEngine`؛ شتاب GPU با **Vulkan** و مدل پیش‌فرض `small-q5_1` (ADR-0013) |
 | ضبط صدا            | WASAPI با NAudio؛ VAD با Silero (ONNX Runtime)               |
 | ویرایشگر (Notepad) | AvalonEdit                                                     |
 | System Tray        | Hardcodet.NotifyIcon.Wpf                                       |
